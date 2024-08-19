@@ -26,11 +26,8 @@ const toggleStatus = () => {
 
 <style scoped>
 footer.footer {
-  position: fixed;
-  bottom: 0;
   width: 100%;
   padding: 15px 0;
-  left: 0;
   background: hsl(var(--card));
   text-align: center;
 }

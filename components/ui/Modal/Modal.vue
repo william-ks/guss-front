@@ -29,9 +29,7 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  if (props.visible) {
     toogleScroll();
-  }
 });
 </script>
 
