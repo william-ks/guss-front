@@ -1,0 +1,8 @@
+button.default {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px hsl(var(--primary));
+
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+
+}
