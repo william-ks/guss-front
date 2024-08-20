@@ -5,7 +5,7 @@
     @click="$emit('close')"
   >
     <aside class="aside" @click="stopPropagation">
-      <header>
+      <header class="asideHeader">
         <button>
           <SideButton
             key="sideBarButton"
@@ -63,11 +63,12 @@ const stopPropagation = (e) => {
 }
 
 .bg.visible .aside {
-  width: clamp(200px, 100%, 400px);
+  width: clamp(200px, 80%, 400px);
 }
 
 header {
   width: 100%;
   padding: 15px 4%;
+  background: hsl(var(--card));
 }
 </style>

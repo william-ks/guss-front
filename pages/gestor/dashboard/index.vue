@@ -1,5 +1,18 @@
 <template>
-  <section class="page"></section>
+  <section class="page">
+    <div class="center">
+      <ul class="flex flex-col items-center justify-center gap-10">
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+        <li class="box">test</li>
+      </ul>
+    </div>
+  </section>
 </template>
 
 <script setup>
@@ -9,20 +22,20 @@ import Header from "~/components/Header.vue";
 const pageTitle = useState("pageTitle");
 
 useHead({
-    title: 'Dashboard'
+  title: "Dashboard",
 });
 
 onMounted(() => {
-  pageTitle.value = 'Dashboard'
-})
+  pageTitle.value = "Dashboard";
+});
 </script>
 
 <style scoped>
-.c {
-  width: 100vw;
-  height: 100vh;
-  background: url("@/assets/bg2.jpg");
-  background-size: cover;
-  background-position: center;
+
+
+.box {
+  width: 200px;
+  height: 200px;
+  background: cadetblue;
 }
 </style>

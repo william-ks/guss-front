@@ -13,7 +13,9 @@ const { title } = defineProps({
   <header class="header">
     <div class="center flex items-center justify-between">
       <SideButton title="header" @toggleSide="open" :isChecked="isOpened" />
-      <h2 v-if="title" class="text-lg font-light capitalize">{{ title }}</h2>
+      <h2 v-if="title" class="select-none text-lg font-light capitalize">
+        {{ title }}
+      </h2>
       <Avatar src="/icon.jpg" />
     </div>
   </header>
