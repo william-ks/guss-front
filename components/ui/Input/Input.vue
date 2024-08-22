@@ -3,33 +3,39 @@
     <div
       v-if="props.type !== 'password'"
       class="content"
-      :class="{ full: value }"
+      :class="{ full: modelValue }"
     >
+      <p
+        v-if="props.desc"
+        class="absolute top-[-12px] text-sm font-extralight text-gray-300"
+      >
+        {{ props.name }}:
+      </p>
       <input
         :type="props.type"
         :id="props.name || props.type"
         :required="props.required"
         v-bind="$attrs"
-        @keyup="
-          (e) => {
-            value = e.target.value;
-          }
-        "
+        :value="modelValue"
+        @input="updateVal"
         class="default"
       />
     </div>
-    <div v-else class="content" :class="{ full: value }">
+    <div v-else class="content" :class="{ full: props.modelValue }">
+      <p
+        v-if="props.desc"
+        class="absolute top-[-12px] text-sm font-extralight text-gray-300"
+      >
+        {{ props.name }}:
+      </p>
       <input
         :type="canView ? 'text' : 'password'"
         :id="props.name || props.type"
         :required="props.required"
-        :placeholder="canView ? 'Senha' : '**********'"
+        :placeholder="canView ? 'Password' : '**********'"
         v-bind="$attrs"
-        @keyup="
-          (e) => {
-            value = e.target?.value;
-          }
-        "
+        :value="props.modelValue"
+        @input="updateVal"
         class="default"
       />
       <Icon
@@ -43,7 +49,6 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-const value = ref("");
 const canView = ref(false);
 
 const props = defineProps({
@@ -52,11 +57,25 @@ const props = defineProps({
     type: String as () => "email" | "text" | "password",
     default: "text",
   },
+  desc: {
+    type: Boolean,
+    default: false,
+  },
   required: {
     type: Boolean,
     default: false,
   },
+  modelValue: {
+    type: String,
+    default: "",
+  },
 });
+
+const emit = defineEmits(["update:modelValue"]);
+
+const updateVal = (e: any) => {
+  emit("update:modelValue", e?.target?.value);
+};
 </script>
 
 <style scoped>
@@ -68,8 +87,13 @@ const props = defineProps({
   right: 10px;
 }
 
+label {
+  width: 100%;
+}
+
 input.default {
   all: unset;
+  font-weight: 200;
   cursor: text;
   background-color: transparent;
   position: relative;
@@ -88,7 +112,7 @@ input.default {
 .content::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: 3px;
   width: 15%;
   left: 5px;
   height: 3px;
@@ -105,5 +129,9 @@ input.default {
 .content.full::after {
   width: calc(100% - 5px);
   background: hsl(var(--secondary));
+  box-shadow:
+    0 0 5px hsl(var(--secondary)),
+    0 0 25px hsl(var(--secondary)),
+    0 0 50px hsl(var(--secondary));
 }
 </style>

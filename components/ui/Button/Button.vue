@@ -70,19 +70,23 @@ button:disabled {
   button:not(:disabled):active {
     position: relative;
     text-shadow: none;
-    box-shadow: 0 0 10px hsl(var(--secondary));
+    box-shadow:
+      0 0 5px hsl(var(--secondary)),
+      0 0 25px hsl(var(--secondary));
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
     border-color: hsl(var(--secondary));
-    transform: scale(1.06);
-    transition: transform 0.05s;
+    transform: scale(0.96);
+    transition: transform 0.025s;
   }
 }
 @media screen and (min-width: 751px) {
   button:not(:disabled):hover {
     position: relative;
     text-shadow: none;
-    box-shadow: 0 0 10px hsl(var(--secondary));
+    box-shadow:
+      0 0 5px hsl(var(--secondary)),
+      0 0 25px hsl(var(--secondary));
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
     border-color: hsl(var(--secondary));
@@ -91,7 +95,9 @@ button:disabled {
 
   button:not(:disabled):active {
     transition: transform 0.05s;
-    box-shadow: 0 0 7px hsl(var(--secondary));
+    box-shadow:
+      0 0 5px hsl(var(--secondary)),
+      0 0 25px hsl(var(--secondary));
     transform: scale(1);
   }
 }

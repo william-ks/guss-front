@@ -25,9 +25,4 @@ footer.footer {
   text-align: center;
 }
 
-.page {
-  padding: 15px 0;
-  width: 100vw;
-  min-height: calc(100vh - 134px);
-}
 </style>
