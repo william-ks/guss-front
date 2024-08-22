@@ -22,7 +22,7 @@
         @mouseleave="showHighlightLogo(false)"
       >
         <h2 class="text-center text-4xl font-light">
-          Welcome {{ student ? student.firstName : "Student" }} !
+          Welcome {{ student ? student.firstName : "Student" }}!
         </h2>
         <form
           @keyup="verifyFullForm"
@@ -147,7 +147,7 @@ const verifyFullForm = () => {
 <style scoped>
 .page {
   width: 100%;
-  height: calc(100vh - 54px);
+  height: calc(100vh - 144px);
 
   position: relative;
 }
@@ -228,6 +228,10 @@ const verifyFullForm = () => {
 }
 
 @media screen and (min-width: 750px) {
+  .page {
+    height: calc(100vh - 54px);
+  }
+
   .box {
     width: clamp(150px, 50%, 600px);
   }

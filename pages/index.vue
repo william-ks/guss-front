@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <section name="Colors" class="center">
       <h2
         class="my-5 border-b border-solid border-gray-800 pb-1 text-center text-4xl font-semibold"
@@ -68,7 +68,14 @@
         </Nuxt-link>
       </div>
     </section>
-  </main>
+    <section class="m-10">
+      <div class="center">
+        <Nuxt-link to="/gestor/Login">
+          <Button> Ir para gestor/login </Button>
+        </Nuxt-link>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup>
@@ -81,11 +88,9 @@ import { onMounted, ref } from "vue";
 
 const visible = ref(false);
 
-
 const toggleModal = () => {
   visible.value = true;
 };
-
 </script>
 
 <style scoped>
