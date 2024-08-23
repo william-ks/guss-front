@@ -15,12 +15,18 @@
           />
         </button>
       </header>
+      <ul>
+        <li v-for="link of links" :key="link.title">
+          <NuxtLink to=""> {{ link.title }} </NuxtLink>
+        </li>
+      </ul>
     </aside>
   </div>
 </template>
 
 <script setup>
 import SideButton from "./SideButton.vue";
+import { links } from "@/composables/links";
 
 const { isVisible } = defineProps({
   isVisible: Boolean,
@@ -41,7 +47,7 @@ const stopPropagation = (e) => {
   z-index: 99;
   backdrop-filter: blur(4px);
 
-  transition: width .35s;
+  transition: width 0.35s;
 }
 
 .bg.noVisible {

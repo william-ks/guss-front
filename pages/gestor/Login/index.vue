@@ -27,7 +27,6 @@
         <form
           @keyup="verifyFullForm"
           @focus="boxHover = true"
-          @focusout="console.log('blur')"
           class="mb-7 mt-5 flex w-[100%] flex-col items-center justify-center gap-7"
         >
           <Input
@@ -97,7 +96,6 @@ const login = () => {
 };
 
 const showHighlightLogo = (highlight) => {
-  console.log(boxHover.value);
   if (!fullLogin.value) {
     if (staticLogo.value == null) {
       staticLogo.value = document.querySelector("#static");

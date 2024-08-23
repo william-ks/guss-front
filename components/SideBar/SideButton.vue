@@ -27,13 +27,12 @@ const { isChecked, title } = defineProps({
 const emit = defineEmits(["toggleSide"]);
 
 const click = () => {
-  console.log(title);
   emit("toggleSide");
 };
 </script>
 
 <style scoped>
-input[type='checkbox'] {
+input[type="checkbox"] {
   display: none;
 }
 
@@ -68,24 +67,24 @@ input[type='checkbox'] {
   transform: translateY(7px);
 }
 
-input[type='checkbox']:checked ~ .line--top {
+input[type="checkbox"]:checked ~ .line--top {
   transform: rotate(45deg);
 }
 
-input[type='checkbox']:checked ~ .line--middle {
+input[type="checkbox"]:checked ~ .line--middle {
   transform: rotate(16deg);
   opacity: 0;
 }
 
-input[type='checkbox']:checked ~ .line--bottom {
+input[type="checkbox"]:checked ~ .line--bottom {
   transform: rotate(-45deg);
 }
 
 @media screen and (min-width: 750px) {
-  input[type='checkbox']:checked:hover ~ .line {
+  input[type="checkbox"]:checked:hover ~ .line {
     background-color: red;
   }
-  input[type='checkbox']:hover ~ .line {
+  input[type="checkbox"]:hover ~ .line {
     background-color: cyan;
   }
 }
