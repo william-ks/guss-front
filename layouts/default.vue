@@ -1,46 +1,41 @@
 <template>
-  <main>
-    <SideBar @close="toggleStatus" :isVisible="isVisibleSideBar" />
-    <Header
-      :title="pageTitle"
-      :isOpened="isVisibleSideBar"
-      :open="toggleStatus"
-    />
-    <slot />
-    <footer class="footer">
-      <div class="center">
-        <h2>@ Todos os direitos reservados</h2>
+  <div class="dark:bg-gray-950 bg-gray-100">
+    <div class="flex">
+      <SideBar :visible="sideBarView" />
+      <div class="right w-[100%]">
+        <Header :sideBarView="sideBarView" @changeSideBar="changeSideBar" />
+        <main>
+          <slot />
+        </main>
+        <footer>
+          <UContainer>
+            <div class="py-[15px]">
+              <h2 class="text-center cursor-pointer">
+                Desenvolvido Por Will Code Systems | 2024 ®
+              </h2>
+            </div>
+          </UContainer>
+        </footer>
       </div>
-    </footer>
-  </main>
+    </div>
+  </div>
 </template>
 
 <script setup>
-const isVisibleSideBar = useState("isVisibleSideBar", () => false);
-const pageTitle = useState("pageTitle", () => "");
+const sideBarView = ref(false);
 
-const toggleStatus = () => {
-  isVisibleSideBar.value = !isVisibleSideBar.value;
+const changeSideBar = () => {
+  sideBarView.value = !sideBarView.value;
 };
 </script>
 
 <style>
-main{
+main {
   width: 100%;
-  height: 100%;
-  overflow-x: hidden;
+  min-height: calc(100vh - 56px - 62px);
 }
 
-footer.footer {
-  width: 100%;
-  padding: 15px 0;
-  background: hsl(var(--card));
-  text-align: center;
-}
-
-.page {
-  padding: 15px 0;
-  width: 100vw;
-  min-height: calc(100vh - 134px);
+footer {
+  @apply border-t-[1px] border-primary-300 dark:border-primary-500 bg-white dark:bg-gray-900 shadow-[0_-5px_10px_hsl(var(--shadow))];
 }
 </style>

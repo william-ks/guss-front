@@ -3,9 +3,38 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/icon", "@nuxt/image"],
+
+  app: {
+    head: {
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
+    },
+    layoutTransition: { name: "fade", mode: "out-in" },
+  },
+
+  plugins: ["~/plugins/routes.ts"],
+
+  modules: [
+    "@nuxt/ui",
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+    "@nuxt/image",
+    "@vueform/nuxt",
+  ],
 
   tailwindcss: {
     cssPath: ["~/styles/tailwind.css", { injectPosition: "first" }],
+    configPath: "~/tailwind.config.ts",
+  },
+
+  colorMode: {
+    preference: "system", // default value of $colorMode.preference
+    fallback: "light", // fallback value if not system preference found
+    hid: "nuxt-color-mode-script",
+    globalName: "__NUXT_COLOR_MODE__",
+    componentName: "ColorScheme",
+    classPrefix: "",
+    classSuffix: "",
+    storageKey: "nuxt-color-mode",
   },
 });

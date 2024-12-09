@@ -1,4 +1,8 @@
 button.outline {
     background-color: transparent;
     box-shadow: none;
+    color: hsl(var(--primary));
+    text-shadow: none;
+    font-weight: 300;
+   
 }

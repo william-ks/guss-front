@@ -1,8 +1,14 @@
 button.default {
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 1px hsl(var(--text-shadow));
     box-shadow: 0 0 10px hsl(var(--primary));
-
+    font-weight: 300;
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
+}
 
+.dark button.default {
+    box-shadow: 0 0 10px hsl(var(--primary));
+    font-weight: 300;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
 }

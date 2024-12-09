@@ -47,11 +47,9 @@ const classes = computed(() => {
 
 button {
   border: 1px solid hsl(var(--primary));
-
   text-transform: capitalize;
-
   border-radius: 999px;
-
+  letter-spacing: 0.3px;
   transition:
     text-shadow 0.25s,
     box-shadow 0.25s,
@@ -83,9 +81,10 @@ button:disabled {
 @media screen and (min-width: 751px) {
   button:not(:disabled):hover {
     position: relative;
-    text-shadow: none;
+    text-shadow: 1px 1px 1px hsl(var(--text-shadow));
     box-shadow:
       0 0 5px hsl(var(--secondary)),
+      0 0 10px hsl(var(--secondary)),
       0 0 25px hsl(var(--secondary));
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
@@ -97,6 +96,7 @@ button:disabled {
     transition: transform 0.05s;
     box-shadow:
       0 0 5px hsl(var(--secondary)),
+      0 0 10px hsl(var(--secondary)),
       0 0 25px hsl(var(--secondary));
     transform: scale(1);
   }

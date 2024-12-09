@@ -1,11 +1,10 @@
 <template>
   <div class="avatar" v-bind="$attrs">
-    <NuxtImg v-if="load" :src="src" />
+    <NuxtImg v-if="true" src="/icon.jpg" />
     <div
       v-else
       class="fallback flex h-[100%] w-[100%] items-center justify-center bg-[hsl(var(--primary))]"
     >
-      <p>WK</p>
     </div>
   </div>
 </template>
@@ -22,18 +21,17 @@ const load = ref(false);
 const checkImg = async () => {
   try {
     const response = await fetch(src, { method: "HEAD" });
-    if (!response.ok) {
-      load.value = false;
+    if (response.ok) {
+      load.value = true;
       return;
     }
-    load.value = true;
   } catch (e) {
     load.value = false;
   }
 };
 
 onMounted(() => {
-  checkImg();
+  // checkImg();
 });
 </script>
 

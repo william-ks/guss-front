@@ -1,134 +1,169 @@
 <template>
-  <div>
-    <section name="Colors" class="center">
-      <h2
-        class="my-5 border-b border-solid border-gray-800 pb-1 text-center text-4xl font-semibold"
-      >
-        Cores
-      </h2>
-      <ul class="ul">
-        <li class="" v-for="color of colors" :key="color.name">
-          <div
-            class="h-[40px] w-[40px]"
-            :style="{ backgroundColor: color.code }"
-          ></div>
-          <p class="text-sm">{{ color.name }}</p>
-        </li>
-      </ul>
-    </section>
-    <section name="Buttons" class="center">
-      <h2
-        class="my-5 border-b border-solid border-gray-800 pb-1 text-center text-4xl font-semibold"
-      >
-        Botões do site
-      </h2>
-      <div class="my-5 flex gap-4">
-        <div class="flex flex-col gap-8">
-          <Button>defafult</Button>
-          <Button :disabled="true">default disabled</Button>
+  <main>
+    <div class="center">
+      <UiCard border shadow class="box">
+        <h2 class="text-center mb-5 text-3xl">Welcome {{ type }}!</h2>
+        <div class="group">
+          <label for="student" class="label">
+            <input
+              @change="change($event, 'emerald')"
+              checked
+              type="radio"
+              id="student"
+              name="iam"
+            />
+            <span class="item red">Student</span>
+          </label>
+          <label for="gestor" class="label">
+            <input
+              @change="change($event, 'green')"
+              type="radio"
+              id="gestor"
+              name="iam"
+            />
+            <span class="item blue">Gestor</span>
+          </label>
         </div>
-
-        <div class="flex flex-col gap-8">
-          <Button variant="outline">outline</Button>
-          <Button variant="outline" :disabled="true"> outline disabled </Button>
+        <ClientOnly>
+          <Vueform ref="form">
+            <TextElement
+              name="email"
+              label="E-mail:"
+              placeholder="E-mail"
+              input-type="email"
+            />
+            <TextElement
+              name="password"
+              label="Password:"
+              placeholder="Password"
+              input-type="password"
+            />
+          </Vueform>
+        </ClientOnly>
+        <div class="w-[100%] flex items-center justify-center">
+          <UButton @click="submit" class="mt-5"> Sign In </UButton>
         </div>
-      </div>
-    </section>
-
-    <section name="Inputs" class="center">
-      <h2
-        class="my-5 mt-10 border-b border-solid border-gray-800 pb-1 text-center text-4xl font-semibold"
-      >
-        Inputs do site
-      </h2>
-      <div class="my-5 flex flex-wrap gap-4">
-        <Input name="Nome" type="text" placeholder="Nome" />
-        <Input name="E-mail" type="email" placeholder="E-mail" />
-        <Input name="Senha" type="password" />
-      </div>
-    </section>
-
-    <section name="Card" class="center">
-      <h2
-        class="my-5 mt-10 border-b border-solid border-gray-800 pb-1 text-center text-4xl font-semibold"
-      >
-        Cards
-      </h2>
-      <Card>
-        <h3 class="">Este é um exemplo de card</h3>
-        <Button @click="toggleModal" class="mt-5">Abrir modal</Button>
-      </Card>
-    </section>
-    <Modal v-if="visible" @close="visible = false" :visible="visible.value" />
-
-    <section class="m-10">
-      <div class="center">
-        <Nuxt-link to="/gestor/dashboard">
-          <Button> Ir para gestor/dashboard </Button>
-        </Nuxt-link>
-      </div>
-    </section>
-    <section class="m-10">
-      <div class="center">
-        <Nuxt-link to="/gestor/Login">
-          <Button> Ir para gestor/login </Button>
-        </Nuxt-link>
-      </div>
-    </section>
-  </div>
+      </UiCard>
+    </div>
+  </main>
 </template>
 
 <script setup>
-import Button from "~/components/ui/Button/Button.vue";
-import Input from "~/components/ui/Input/Input.vue";
-import Card from "~/components/ui/Card/Card.vue";
-import Modal from "~/components/ui/Modal/Modal.vue";
-import { colors } from "~/composables/colors";
-import { onMounted, ref } from "vue";
+const toast = useToast();
+const appConfig = useAppConfig();
 
-const visible = ref(false);
+import { useManagerStore } from "@/stores/manager";
+const managerStore = useManagerStore();
 
-const toggleModal = () => {
-  visible.value = true;
+const form = ref();
+
+const type = ref("student");
+
+const submit = async () => {
+  try {
+    const link = await managerStore.login({
+      type: type.value,
+      email: form.value.data.email,
+      password: form.value.data.password,
+    });
+
+    navigateTo(link);
+  } catch (e) {
+    toast.add({
+      color: "red",
+      title: e.message,
+      description: "Por favor tente novamente",
+      icon: "ph:warning",
+      timeout: 3000,
+    });
+  }
 };
+
+definePageMeta({
+  layout: "nothing",
+});
+
+const change = (e, cor) => {
+  if (e.target.checked) {
+    type.value = e.target.id;
+    appConfig.ui.primary = cor;
+    localStorage.setItem("nuxt-ui-primary", appConfig.ui.primary);
+  }
+};
+
+onMounted(() => {
+  appConfig.ui.primary = "emerald";
+});
 </script>
 
 <style scoped>
-.center {
+main {
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.ul {
+main .center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4%;
+}
+
+.box {
+  width: clamp(200px, 98%, 600px);
+  padding: 16px 2%;
+  border-radius: 6px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.group {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  margin-bottom: 25px;
 }
 
-.ul li {
-  width: 166px;
+.group .label {
+  width: 50%;
+  height: 35px;
+}
 
-  border-radius: 10px;
+.group .label input {
+  display: none;
+}
+
+.group .label .item {
+  display: inline-block;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #ccc;
-}
-
-.ul li > div {
+  cursor: pointer;
   width: 100%;
-  height: 166px;
+  height: 100%;
+  color: white;
+  background-color: rgb(62, 59, 65);
+  @apply bg-gray-300 text-black;
 }
 
-.ul li > p {
-  padding: 10px 5%;
-  text-align: center;
+.group .label:first-of-type .item {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.group .label:last-of-type .item {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.group .label input:checked ~ .item.red {
+  @apply bg-emerald-500 text-white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+.group .label input:checked ~ .item.blue {
+  @apply bg-green-500 text-white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 </style>

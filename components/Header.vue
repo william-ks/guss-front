@@ -1,31 +1,51 @@
-<script setup>
-import SideButton from "@/components/SideBar/SideButton.vue";
-import Avatar from "@/components/ui/Avatar/Avatar.vue";
-
-const { title } = defineProps({
-  title: String,
-  open: Function,
-  isOpened: Boolean,
-});
-</script>
-
 <template>
-  <header class="header">
-    <div class="center flex items-center justify-between">
-      <SideButton title="header" @toggleSide="open" :isChecked="isOpened" />
-      <h2 v-if="title" class="select-none text-lg font-light capitalize">
-        {{ title }}
-      </h2>
-      <Avatar src="/icon.jpg" />
-    </div>
+  <header
+    class="border-b-[1px] border-primary-300 dark:border-primary-500 bg-white dark:bg-gray-900 shadow-[0_5px_10px_hsl(var(--shadow))]"
+  >
+    <UContainer class="py-[15px]">
+      <div class="flex justify-between items-center">
+        <UIcon
+          v-if="!sideBarView"
+          class="cursor-pointer text-3xl"
+          name="uil:bars"
+          @click="$emit('changeSideBar')"
+        />
+        <UIcon
+          v-else
+          class="cursor-pointer text-3xl"
+          name="material-symbols-light:close"
+          @click="$emit('changeSideBar')"
+        />
+        <h3>{{ actualPage }}</h3>
+        <ProfileIcon />
+      </div>
+    </UContainer>
   </header>
 </template>
+
+<script setup>
+const toast = useToast();
+
+const actualPage = useState("actualPage", () => "");
+
+const props = defineProps({
+  sideBarView: Boolean,
+});
+
+const addToast = () => {
+  toast.add({
+    color: "teal",
+    title: "Nav bar",
+    description: "Opened navbar.",
+    timeout: 2000,
+  });
+};
+</script>
 
 <style scoped>
 header {
   width: 100%;
-  padding: 15px 0;
-  /* box-shadow: 0 1px 10px hsl(var(--primary)); */
-  background: hsl(var(--card));
+  /* box-shadow: 0 5px 10px hsl(var(--shadow)); */
+  /* background-color: hsl(var(--card-bg)); */
 }
 </style>
