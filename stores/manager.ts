@@ -10,7 +10,7 @@ export const useManagerStore = defineStore("managerStore", () => {
     mergeDefaults: true,
   });
 
-  const office = useStorage("managerOffice", "", localStorage, {
+  const role = useStorage("managerRole", "", localStorage, {
     mergeDefaults: true,
   });
 
@@ -36,7 +36,7 @@ export const useManagerStore = defineStore("managerStore", () => {
       token.value = data.token;
       name.value = data.user.name;
       email.value = data.user.email;
-      office.value = data.user.office;
+      role.value = data.user.role;
 
       return "/manager/dashboard";
     } catch (e: any) {
@@ -61,7 +61,15 @@ export const useManagerStore = defineStore("managerStore", () => {
     }
   };
 
-  return { name, email, office, token, login, readSelf };
+  const logOut = async () => {
+    token.value = "";
+    name.value = "";
+    email.value = "";
+    role.value = "";
+    navigateTo("/");
+  };
+
+  return { name, email, role, token, login, readSelf, logOut };
 });
 
 interface ILogin {
