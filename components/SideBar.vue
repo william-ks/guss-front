@@ -12,7 +12,7 @@
           <NuxtLink to=""> Students </NuxtLink>
         </li>
         <li>
-          <NuxtLink to=""> Managers </NuxtLink>
+          <NuxtLink to="/manager/all"> Managers </NuxtLink>
         </li>
       </ul>
     </nav>

@@ -7,7 +7,7 @@
         />
       </div>
       <h3><span class="highlight">Name:</span> {{ user.name }}</h3>
-      <h3><span class="highlight">Office:</span> {{ user.office.title }}</h3>
+      <h3><span class="highlight">Office:</span> {{ user.role.title }}</h3>
       <h3><span class="highlight">E-mail:</span> {{ user.email }}</h3>
       <h3>
         <span class="highlight">Birthday:</span>
@@ -30,8 +30,8 @@ const actualPage = useState("actualPage");
 
 const user = ref({
   name: managerStore.name || "Unknown",
-  office: {
-    title: managerStore.office || "Unknown",
+  role: {
+    title: managerStore.role || "Unknown",
   },
   email: managerStore.email || "unknown@example.com",
   birthday: "Unknown",
