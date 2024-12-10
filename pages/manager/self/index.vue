@@ -181,10 +181,18 @@ const showToast = (message) => {
 
 const updateUser = async () => {
   try {
-    // Supondo que o código de atualização seja adicionado aqui
+    const form = {
+      name: nameEdit.value,
+      email: emailEdit.value,
+      cpf: cpfEdit.value,
+      birthday: birthdayEdit.value,
+    };
+
+    await managerStore.updateSelf(form);
     showToast("User has been updated.");
+    await getUserData();
+    isEditing.value = false;
   } catch (error) {
-    console.error("Error updating user:", error);
     toast.add({
       color: "red",
       title: "Error",

@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
 
 export const useManagerStore = defineStore("managerStore", () => {
+  const config = useRuntimeConfig();
+
   const name = useStorage("managerName", "", localStorage, {
     mergeDefaults: true,
   });
@@ -27,7 +29,7 @@ export const useManagerStore = defineStore("managerStore", () => {
 
     try {
       const data: any = await $fetch(
-        "http://localhost:3001/master/manager/login",
+        `${config.public.apiUrl}/master/manager/login`,
         {
           method: "POST",
           body: {
@@ -52,7 +54,7 @@ export const useManagerStore = defineStore("managerStore", () => {
   const readSelf = async () => {
     try {
       const data = await $fetch(
-        "http://localhost:3001/master/manager/read/self",
+        `${config.public.apiUrl}/master/manager/read/self`,
         {
           headers: {
             authorization: `Bearer ${token.value}`,
@@ -66,6 +68,25 @@ export const useManagerStore = defineStore("managerStore", () => {
     }
   };
 
+  const updateSelf = async (form: IUpdateUser) => {
+    try {
+      await $fetch(`${config.public.apiUrl}/master/manager/update/self`, {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${token.value}`,
+        },
+        body: {
+          ...form,
+        },
+      });
+    } catch (e: any) {
+      console.log(e);
+      throw new Error();
+
+      // throw new Error(e.response._data.message);
+    }
+  };
+
   const logOut = async () => {
     token.value = "";
     photo.value = "";
@@ -75,10 +96,28 @@ export const useManagerStore = defineStore("managerStore", () => {
     navigateTo("/");
   };
 
-  return { name, email, photo, role, token, login, readSelf, logOut };
+  return {
+    name,
+    email,
+    updateSelf,
+    photo,
+    role,
+    token,
+    login,
+    readSelf,
+    logOut,
+  };
 });
 
 interface ILogin {
   email: string;
   password: string;
+}
+
+interface IUpdateUser {
+  name: string;
+  email: string;
+  photo: string;
+  cpf: string;
+  birthday: string;
 }
