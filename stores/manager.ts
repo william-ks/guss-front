@@ -6,6 +6,10 @@ export const useManagerStore = defineStore("managerStore", () => {
     mergeDefaults: true,
   });
 
+  const photo = useStorage("managerPhoto", "", localStorage, {
+    mergeDefaults: true,
+  });
+
   const email = useStorage("managerEmail", "", localStorage, {
     mergeDefaults: true,
   });
@@ -37,6 +41,7 @@ export const useManagerStore = defineStore("managerStore", () => {
       name.value = data.user.name;
       email.value = data.user.email;
       role.value = data.user.role;
+      photo.value = data.user.photo;
 
       return "/manager/dashboard";
     } catch (e: any) {
@@ -63,13 +68,14 @@ export const useManagerStore = defineStore("managerStore", () => {
 
   const logOut = async () => {
     token.value = "";
+    photo.value = "";
     name.value = "";
     email.value = "";
     role.value = "";
     navigateTo("/");
   };
 
-  return { name, email, role, token, login, readSelf, logOut };
+  return { name, email, photo, role, token, login, readSelf, logOut };
 });
 
 interface ILogin {

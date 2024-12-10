@@ -17,14 +17,16 @@
           @click="$emit('changeSideBar')"
         />
         <h3>{{ actualPage }}</h3>
-        <ProfileIcon />
+        <ProfileIcon :userIcon="managerStore.photo" />
       </div>
     </UContainer>
   </header>
 </template>
 
 <script setup>
+import { useManagerStore } from "@/stores/manager";
 const toast = useToast();
+const managerStore = useManagerStore();
 
 const actualPage = useState("actualPage", () => "");
 

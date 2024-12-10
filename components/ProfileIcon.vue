@@ -34,7 +34,7 @@ const items = [
     :popper="{ placement: 'bottom-start', arrow: true }"
   >
     <UAvatar
-      src="https://i.pinimg.com/736x/6d/50/9d/6d509d329b23502e4f4579cbad5f3d7f.jpg"
+      :src="managerStore.photo || 'https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg'"
     />
 
     <template #account="{ item }">

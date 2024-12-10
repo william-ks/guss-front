@@ -1,21 +1,123 @@
 <template>
   <div class="center">
     <UiCard :shadow="true" :border="true" class="box">
-      <div class="img">
-        <NuxtImg
-          src="https://i.pinimg.com/736x/6d/50/9d/6d509d329b23502e4f4579cbad5f3d7f.jpg"
+      <div class="img relative">
+        <NuxtImg :src="user.photo" />
+        <UPopover v-if="false">
+          <UButton
+            rounded
+            icon="i-heroicons-pencil-square"
+            class="absolute top-[-20px] right-[30px]"
+          >
+            Edit Image
+          </UButton>
+
+          <template #panel>
+            <UInput
+              v-model:model-value="photoEdit"
+              @update:model-value="photoEdit"
+              type="file"
+              size="sm"
+              icon="i-heroicons-folder"
+            />
+          </template>
+        </UPopover>
+      </div>
+
+      <div class="group">
+        <h3>
+          <span class="highlight"> Name: </span>
+          <span v-if="!isEditing"> {{ user.name }}</span>
+        </h3>
+        <UInput
+          class="inputCustom"
+          v-if="isEditing"
+          type="name"
+          v-model:model-value="nameEdit"
         />
       </div>
-      <h3><span class="highlight">Name:</span> {{ user.name }}</h3>
-      <h3><span class="highlight">Office:</span> {{ user.role.title }}</h3>
-      <h3><span class="highlight">E-mail:</span> {{ user.email }}</h3>
-      <h3>
-        <span class="highlight">Birthday:</span>
-        {{ user.birthday }}
-      </h3>
 
-      <div class="flex justify-center items-center">
-        <UButton @click="popUp" variant="outline" class="mt-5">Edit</UButton>
+      <div class="group">
+        <h3>
+          <span class="highlight">Cpf:</span>
+          <span v-if="!isEditing">{{ user.cpf }}</span>
+        </h3>
+        <UInput
+          v-maska="'###.###.###-##'"
+          v-if="isEditing"
+          type="name"
+          v-model:model-value="cpfEdit"
+        />
+      </div>
+
+      <div class="group">
+        <h3>
+          <span class="highlight">Role:</span>
+          <span>
+            {{ user.role.title }}
+          </span>
+        </h3>
+      </div>
+      <div class="group">
+        <h3>
+          <span class="highlight">E-mail:</span>
+          <span v-if="!isEditing">{{ user.email }}</span>
+        </h3>
+        <UInput v-if="isEditing" type="email" v-model:model-value="emailEdit" />
+      </div>
+      <div class="group">
+        <h3>
+          <span class="highlight">Birthday:</span>
+          <span v-if="!isEditing">{{ user.birthday || "00/00/0000" }}</span>
+        </h3>
+        <div @click="() => (showPopover = true)">
+          <UInput
+            v-if="isEditing"
+            type="text"
+            icon="material-symbols:edit-calendar-outline"
+            v-maska="'##/##/####'"
+            v-model="birthdayEdit"
+          />
+        </div>
+        <UPopover v-model:open="showPopover">
+          <button></button>
+          <template #panel>
+            <UiDatePicker
+              v-model:model-value="selectedDate"
+              @update:model-value="updateDate"
+              @close="closeDateModel"
+            />
+          </template>
+        </UPopover>
+      </div>
+
+      <div class="w-[100%] flex justify-between items-center gap-16 mt-5">
+        <UButton
+          v-if="!isEditing"
+          @click="isEditing = true"
+          variant="outline"
+          icon="i-heroicons-pencil-square"
+        >
+          Edit
+        </UButton>
+
+        <UButton
+          v-if="isEditing"
+          @click="resetFields"
+          color="red"
+          variant="outline"
+        >
+          Cancelar
+        </UButton>
+
+        <UButton
+          v-if="isEditing"
+          @click="updateUser"
+          variant="outline"
+          color="green"
+        >
+          Salvar
+        </UButton>
       </div>
     </UiCard>
   </div>
@@ -25,36 +127,95 @@
 import { useManagerStore } from "@/stores/manager";
 const managerStore = useManagerStore();
 const toast = useToast();
+const showPopover = ref(false);
+const selectedDate = ref(new Date());
+const isEditing = ref(false);
 
-const actualPage = useState("actualPage");
+const emailEdit = ref("");
+const nameEdit = ref("");
+const cpfEdit = ref("");
+const photoEdit = ref("");
+const birthdayEdit = ref("");
 
 const user = ref({
-  name: managerStore.name || "Unknown",
-  role: {
-    title: managerStore.role || "Unknown",
-  },
-  email: managerStore.email || "unknown@example.com",
-  birthday: "Unknown",
+  name: "Unknown",
+  photo:
+    "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg",
+  cpf: "Unknown",
+  role: { title: managerStore.role || "Unknown" },
+  email: "unknown@example.com",
+  birthday: "00/00/0000",
 });
 
-const popUp = () => {
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+const updateDate = () => {
+  birthdayEdit.value = formatDate(selectedDate.value);
+};
+
+const closeDateModel = () => {
+  showPopover.value = false;
+};
+
+const resetFields = () => {
+  isEditing.value = false;
+
+  emailEdit.value = user.value.email;
+  nameEdit.value = user.value.name;
+  cpfEdit.value = user.value.cpf;
+  birthdayEdit.value = user.value.birthday || "00/00/0000";
+};
+
+const showToast = (message) => {
   toast.add({
-    color: "amber",
-    title: "Essa feature ainda está em desenvolvimento!",
-    description: "Por favor tente novamente mais tarde.",
-    icon: "ph:warning",
-    timeout: 3000,
+    color: "lime",
+    title: "Success",
+    description: message,
   });
 };
 
-const getData = async () => {
-  const data = await managerStore.readSelf();
-  user.value = data;
+const updateUser = async () => {
+  try {
+    // Supondo que o código de atualização seja adicionado aqui
+    showToast("User has been updated.");
+  } catch (error) {
+    console.error("Error updating user:", error);
+    toast.add({
+      color: "red",
+      title: "Error",
+      description: "There was an error updating the user.",
+    });
+  }
+};
+
+const getUserData = async () => {
+  try {
+    const data = await managerStore.readSelf();
+    user.value = data;
+
+    emailEdit.value = data.email;
+    nameEdit.value = data.name;
+    cpfEdit.value = data.cpf;
+    birthdayEdit.value = data.birthday || "00/00/0000";
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    toast.add({
+      color: "red",
+      title: "Error",
+      description: "There was an error loading user data.",
+    });
+  }
 };
 
 onMounted(() => {
+  const actualPage = useState("actualPage");
   actualPage.value = "My Account";
-  getData();
+  getUserData();
 });
 </script>
 
@@ -68,6 +229,11 @@ onMounted(() => {
 
 .box {
   width: clamp(170px, 98%, 550px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .img {
@@ -77,6 +243,7 @@ onMounted(() => {
 
   margin-bottom: 15px;
 }
+
 .img img {
   width: 100%;
   height: 100%;
@@ -92,6 +259,13 @@ h3 {
   margin-top: 5px;
   display: inline-block;
   font-size: 1.1rem;
+  margin-right: 3px;
   font-weight: 300;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 </style>
