@@ -4,7 +4,7 @@
       <UiTogglePallet />
     </div>
     <nav class="menu">
-      <ul>
+      <ul @click="$emit('close')">
         <li>
           <NuxtLink to="/manager/dashboard"> Dashboard </NuxtLink>
         </li>

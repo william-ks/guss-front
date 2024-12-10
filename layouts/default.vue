@@ -1,7 +1,7 @@
 <template>
   <div class="dark:bg-gray-950 bg-gray-100">
     <div class="flex">
-      <SideBar :visible="sideBarView" />
+      <SideBar :visible="sideBarView" @close="changeSideBar" />
       <div class="right w-[100%]">
         <Header :sideBarView="sideBarView" @changeSideBar="changeSideBar" />
         <main>
