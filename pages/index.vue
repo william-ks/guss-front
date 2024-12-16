@@ -69,10 +69,11 @@ const submit = async () => {
 
     navigateTo(link);
   } catch (e) {
+    toast.clear();
     toast.add({
       color: "red",
       title: e.message,
-      description: "Por favor tente novamente",
+      description: "Please try again.",
       icon: "ph:warning",
       timeout: 3000,
     });

@@ -10,7 +10,7 @@
 html,
 body,
 #__nuxt {
-    overflow: auto;
+    /* overflow: auto; */
 }
 
 body.lockScroll {
@@ -20,7 +20,7 @@ body.lockScroll {
 .center {
     max-width: 1280px;
     width: 100%;
-    padding: 0 4%;
+    padding: 10px 4%;
     margin: 0 auto;
 }
 

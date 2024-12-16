@@ -22,4 +22,13 @@ export default {
       },
     },
   },
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        ".dark\\:shine": {
+          textShadow: "0 0 5px",
+        },
+      });
+    },
+  ],
 };

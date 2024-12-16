@@ -4,6 +4,10 @@ import { useStorage } from "@vueuse/core";
 export const useManagerStore = defineStore("managerStore", () => {
   const config = useRuntimeConfig();
 
+  const id = useStorage("managerId", "", localStorage, {
+    mergeDefaults: true,
+  });
+
   const name = useStorage("managerName", "", localStorage, {
     mergeDefaults: true,
   });
@@ -16,7 +20,11 @@ export const useManagerStore = defineStore("managerStore", () => {
     mergeDefaults: true,
   });
 
-  const role = useStorage("managerRole", "", localStorage, {
+  const role = useStorage("managerRole", {}, localStorage, {
+    mergeDefaults: true,
+  });
+
+  const permissions = useStorage("managerPermissions", [], localStorage, {
     mergeDefaults: true,
   });
 
@@ -40,10 +48,12 @@ export const useManagerStore = defineStore("managerStore", () => {
       );
 
       token.value = data.token;
+      id.value = data.user.id;
       name.value = data.user.name;
       email.value = data.user.email;
       role.value = data.user.role;
       photo.value = data.user.photo;
+      permissions.value = data.user.permissions;
 
       return "/manager/dashboard";
     } catch (e: any) {
@@ -53,8 +63,54 @@ export const useManagerStore = defineStore("managerStore", () => {
 
   const readSelf = async () => {
     try {
-      const data = await $fetch(
+      const data: any = await $fetch(
         `${config.public.apiUrl}/master/manager/read/self`,
+        {
+          headers: {
+            authorization: `Bearer ${token.value}`,
+          },
+        }
+      );
+
+      name.value = data.name;
+      email.value = data.email;
+      photo.value = data.photo;
+      role.value = data.role;
+      permissions.value = data.permissions;
+
+      return data;
+    } catch (e: any) {
+      throw new Error(e.response._data.message);
+    }
+  };
+
+  const readAll = async () => {
+    const toast = useToast();
+    try {
+      const found = await $fetch(
+        `${config.public.apiUrl}/master/manager/read/all`,
+        {
+          headers: {
+            authorization: `Bearer ${token.value}`,
+          },
+        }
+      );
+
+      return found;
+    } catch (e) {
+      toast.clear();
+      toast.add({
+        title: "Error",
+        description: "Error on list managers.",
+        color: "red",
+      });
+    }
+  };
+
+  const readOther = async (id: string) => {
+    try {
+      const data = await $fetch(
+        `${config.public.apiUrl}/master/manager/read/other/${id}`,
         {
           headers: {
             authorization: `Bearer ${token.value}`,
@@ -80,29 +136,52 @@ export const useManagerStore = defineStore("managerStore", () => {
         },
       });
     } catch (e: any) {
-      console.log(e);
-      throw new Error();
+      throw new Error(e.data.message);
+    }
+  };
 
-      // throw new Error(e.response._data.message);
+  const updateOther = async (form: IUpdateOther, otherId: string) => {
+    try {
+      await $fetch(
+        `${config.public.apiUrl}/master/manager/update/other/${otherId}`,
+        {
+          method: "PUT",
+          headers: {
+            authorization: `Bearer ${token.value}`,
+          },
+          body: {
+            ...form,
+          },
+        }
+      );
+    } catch (e: any) {
+      throw new Error(e.data.message);
     }
   };
 
   const logOut = async () => {
+    id.value = "";
     token.value = "";
     photo.value = "";
     name.value = "";
     email.value = "";
-    role.value = "";
+    role.value = {};
+    permissions.value = [];
     navigateTo("/");
   };
 
   return {
+    id,
     name,
     email,
-    updateSelf,
     photo,
     role,
     token,
+    permissions,
+    readAll,
+    readOther,
+    updateSelf,
+    updateOther,
     login,
     readSelf,
     logOut,
@@ -120,4 +199,15 @@ interface IUpdateUser {
   photo: string;
   cpf: string;
   birthday: string;
+}
+
+interface IUpdateOther {
+  roleId: number | null;
+  permissions:
+    | {
+        id: number;
+        toAdd: boolean;
+        toRemove: boolean;
+      }[]
+    | null[];
 }

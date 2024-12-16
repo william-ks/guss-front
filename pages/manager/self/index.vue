@@ -58,6 +58,7 @@
           </span>
         </h3>
       </div>
+
       <div class="group">
         <h3>
           <span class="highlight">E-mail:</span>
@@ -65,6 +66,7 @@
         </h3>
         <UInput v-if="isEditing" type="email" v-model:model-value="emailEdit" />
       </div>
+
       <div class="group">
         <h3>
           <span class="highlight">Birthday:</span>
@@ -89,6 +91,17 @@
             />
           </template>
         </UPopover>
+      </div>
+
+      <div class="w-[100%]">
+        <h3>
+          <span class="highlight"> Authorizations: </span>
+          <ul>
+            <li v-for="permission of user.permissions" :key="permission.id">
+              - {{ permission.permission.name }}
+            </li>
+          </ul>
+        </h3>
       </div>
 
       <div class="w-[100%] flex justify-between items-center gap-16 mt-5">
@@ -172,8 +185,9 @@ const resetFields = () => {
 };
 
 const showToast = (message) => {
+  toast.clear();
   toast.add({
-    color: "lime",
+    color: "green",
     title: "Success",
     description: message,
   });
@@ -193,10 +207,11 @@ const updateUser = async () => {
     await getUserData();
     isEditing.value = false;
   } catch (error) {
+    toast.clear();
     toast.add({
       color: "red",
       title: "Error",
-      description: "There was an error updating the user.",
+      description: error.message,
     });
   }
 };
@@ -206,12 +221,17 @@ const getUserData = async () => {
     const data = await managerStore.readSelf();
     user.value = data;
 
+    if (!data.photo) {
+      user.value.photo =
+        "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg";
+    }
+
     emailEdit.value = data.email;
     nameEdit.value = data.name;
     cpfEdit.value = data.cpf;
     birthdayEdit.value = data.birthday || "00/00/0000";
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    toast.clear();
     toast.add({
       color: "red",
       title: "Error",
@@ -232,7 +252,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 120px);
+  min-height: calc(100vh - 120px);
 }
 
 .box {

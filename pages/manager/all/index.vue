@@ -1,19 +1,27 @@
 <template>
   <div class="center">
     <UiCard :shadow="true" :border="true" class="box">
-      <h3>Managers</h3>
+      <ul class="w-[100%] flex gap-5 flex-col">
+        <ManagerLi v-for="manager of managersList" :key="manager.id" :manager="manager" />
+      </ul>
     </UiCard>
   </div>
 </template>
 
 <script setup>
 import { useManagerStore } from "@/stores/manager";
+import ManagerLi from "./_components/ManagerLi";
+
 const managerStore = useManagerStore();
 const toast = useToast();
+const managersList = ref([]);
 
-const full = ref(false);
+const getManagers = async () => {
+  managersList.value = await managerStore.readAll();
+};
 
 onMounted(() => {
+  getManagers();
   const actualPage = useState("actualPage");
   actualPage.value = "Managers";
 });
@@ -24,8 +32,6 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 120px);
+  min-height: calc(100vh - 150px);
 }
-
-
 </style>

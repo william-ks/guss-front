@@ -33,15 +33,6 @@ const actualPage = useState("actualPage", () => "");
 const props = defineProps({
   sideBarView: Boolean,
 });
-
-const addToast = () => {
-  toast.add({
-    color: "teal",
-    title: "Nav bar",
-    description: "Opened navbar.",
-    timeout: 2000,
-  });
-};
 </script>
 
 <style scoped>
