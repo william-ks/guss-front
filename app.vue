@@ -1,8 +1,8 @@
 <template>
   <NuxtLayout>
     <NuxtPage :transition="{ name: 'rotate', mode: 'out-in' }" />
+    <LoadingScreen />
   </NuxtLayout>
-
   <UNotifications />
 </template>
 
