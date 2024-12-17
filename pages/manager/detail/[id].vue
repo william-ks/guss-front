@@ -129,7 +129,7 @@ const roleStore = useRoleStore();
 const permissionStore = usePermissionStore();
 const actualPage = useState("actualPage");
 const toast = useToast();
-const isOpenModal = ref(true);
+const isOpenModal = ref(false);
 const canEdit = ref(false);
 
 const { params } = useRoute();

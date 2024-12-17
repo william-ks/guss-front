@@ -2,8 +2,8 @@
   <div class="center">
     <UiCard :shadow="true" :border="true" class="box">
       <div class="img relative">
-        <NuxtImg :src="user.photo" />
-        <UPopover v-if="false">
+        <NuxtImg :src="photoEdit || user.photo" />
+        <UPopover v-if="isEditing">
           <UButton
             rounded
             icon="i-heroicons-pencil-square"
@@ -14,8 +14,7 @@
 
           <template #panel>
             <UInput
-              v-model:model-value="photoEdit"
-              @update:model-value="photoEdit"
+              @change="handleFileIcon"
               type="file"
               size="sm"
               icon="i-heroicons-folder"
@@ -160,6 +159,28 @@ const user = ref({
   birthday: "00/00/0000",
 });
 
+const loadingScreen = useState("loadingScreen");
+
+const load = () => {
+  loadingScreen.value = !loadingScreen.value;
+  console.log(loadingScreen.value);
+};
+
+const handleFileIcon = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file[0]);
+
+  try {
+    loadingScreen.value = true;
+    const response = await uploadImage(formData);
+    photoEdit.value = response.link;
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loadingScreen.value = false;
+  }
+};
+
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -181,6 +202,7 @@ const resetFields = () => {
   emailEdit.value = user.value.email;
   nameEdit.value = user.value.name;
   cpfEdit.value = user.value.cpf;
+  photoEdit.value = null;
   birthdayEdit.value = user.value.birthday || "00/00/0000";
 };
 
@@ -198,6 +220,7 @@ const updateUser = async () => {
     const form = {
       name: nameEdit.value,
       email: emailEdit.value,
+      photo: photoEdit.value || null,
       cpf: cpfEdit.value,
       birthday: birthdayEdit.value,
     };
