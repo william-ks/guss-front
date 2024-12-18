@@ -161,11 +161,6 @@ const user = ref({
 
 const loadingScreen = useState("loadingScreen");
 
-const load = () => {
-  loadingScreen.value = !loadingScreen.value;
-  console.log(loadingScreen.value);
-};
-
 const handleFileIcon = async (file) => {
   const formData = new FormData();
   formData.append("file", file[0]);
@@ -202,7 +197,7 @@ const resetFields = () => {
   emailEdit.value = user.value.email;
   nameEdit.value = user.value.name;
   cpfEdit.value = user.value.cpf;
-  photoEdit.value = null;
+  photoEdit.value = "";
   birthdayEdit.value = user.value.birthday || "00/00/0000";
 };
 
@@ -220,10 +215,14 @@ const updateUser = async () => {
     const form = {
       name: nameEdit.value,
       email: emailEdit.value,
-      photo: photoEdit.value || null,
+
       cpf: cpfEdit.value,
       birthday: birthdayEdit.value,
     };
+
+    if(photoEdit.value){
+      form.photo = photoEdit.value
+    }
 
     await managerStore.updateSelf(form);
     showToast("User has been updated.");
