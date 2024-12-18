@@ -2,6 +2,14 @@
   <div>
     <NuxtLink :to="nuxtTo">
       <li class="managerBox">
+        <div class="state state_card">
+          <UButton
+            :color="props.manager.isActive ? 'green' : 'red'"
+            variant="soft"
+          >
+            {{ props.manager.isActive ? "Active" : "disabled" }}
+          </UButton>
+        </div>
         <div class="img">
           <NuxtImg
             :src="
@@ -14,7 +22,6 @@
           <p>{{ props.manager.name }}</p>
           <p>{{ props.manager.email }}</p>
           <p>{{ props.manager.role.title }}</p>
-          
         </div>
       </li>
     </NuxtLink>
@@ -31,7 +38,6 @@ const props = defineProps({
 
 const nuxtTo = ref(`/manager/detail/${props.manager.publicId}`);
 
-
 onMounted(() => {
   if (props.manager.publicId === managerStore.id) {
     nuxtTo.value = `/manager/self`;
@@ -44,6 +50,7 @@ onMounted(() => {
   width: 100%;
   box-shadow: 0 5px 10px white;
   border-radius: 8px;
+  position: relative;
   padding: 16px 2%;
   display: flex;
   /* flex-direction: column; */
@@ -56,6 +63,15 @@ onMounted(() => {
   @apply dark:bg-[rgb(38,38,43)] bg-gray-50 shadow-[0_5px_10px_rgba(0,0,0,0.2)] dark:shadow-[0_5px_10px_rgba(0,0,0,0.8)];
 
   transition: transform 0.15s;
+}
+
+.state {
+  position: absolute;
+}
+
+.state_card {
+  top: 10px;
+  right: 10px;
 }
 
 .managerBox p {

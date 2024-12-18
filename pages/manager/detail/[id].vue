@@ -1,6 +1,16 @@
 <template>
   <div class="center">
     <UiCard :shadow="true" :border="true" class="box">
+      <div class="state state_card">
+        <UButton
+          @click="openToggleModal"
+          :color="user.isActive ? 'green' : 'red'"
+          variant="soft"
+        >
+          {{ user.isActive ? "Active" : "disabled" }}
+        </UButton>
+      </div>
+
       <div class="img relative">
         <NuxtImg :src="user.photo" />
       </div>
@@ -54,8 +64,10 @@
       <div class="w-[100%] flex justify-center items-center gap-16 mt-5">
         <UButton
           v-if="canEdit"
+          :disabled="!user.isActive"
           @click="isOpenModal = true"
           variant="outline"
+          :color="user.isActive ? 'primary' : 'gray'"
           icon="i-heroicons-pencil-square"
         >
           Edit This User
@@ -113,8 +125,38 @@
             dataToUpdate.permissions.length <= 0 && !dataToUpdate.roleId
           "
           @click="tryUpdate"
-          >Update data</UButton
         >
+          Update data
+        </UButton>
+      </div>
+    </UiModal>
+
+    <UiModal
+      @update:model-value="resetFields"
+      v-if="canEdit"
+      v-model="isOpenSecondModal"
+    >
+      <h2 class="text-center text-xl">
+        Are you sure you want to
+        {{ user.isActive ? "deactivate" : "activate" }} this user?
+      </h2>
+
+      <div class="w-[100%] flex items-center justify-evenly mt-7">
+        <UButton
+          variant="outline"
+          v-on:mouseover="redButton = true"
+          v-on:mouseout="redButton = false"
+          :color="redButton ? 'red' : 'gray'"
+        >
+          Cancel
+        </UButton>
+        <UButton
+          @click="toggleManager(!user.isActive)"
+          variant="outline"
+          color="green"
+        >
+          Confirm
+        </UButton>
       </div>
     </UiModal>
   </div>
@@ -130,7 +172,11 @@ const permissionStore = usePermissionStore();
 const actualPage = useState("actualPage");
 const toast = useToast();
 const isOpenModal = ref(false);
+const isOpenSecondModal = ref(false);
 const canEdit = ref(false);
+const canToggleManager = ref(false);
+
+const redButton = ref(false);
 
 const { params } = useRoute();
 const id = params.id;
@@ -145,6 +191,21 @@ const dataToUpdate = ref({
 
 const permissionsRef = ref([]);
 
+const openToggleModal = () => {
+  if (!canToggleManager.value) {
+    toast.clear();
+    toast.add({
+      title: "Unauthorized",
+      description: "You don't have this permission.",
+      color: "red",
+    });
+
+    return;
+  }
+
+  isOpenSecondModal.value = true;
+};
+
 const user = ref({
   name: "Unknown",
   photo:
@@ -153,6 +214,7 @@ const user = ref({
   role: { title: managerStore.role || "Unknown", id: null },
   email: "unknown@example.com",
   birthday: "00/00/0000",
+  isActive: true,
 });
 
 const getUserData = async () => {
@@ -229,6 +291,33 @@ const loadPage = async () => {
   await getUserData();
 };
 
+const toggleManager = async (status) => {
+  try {
+    await managerStore.toggleManager({
+      managerId: user.value.publicId,
+      status,
+    });
+
+    isOpenModal.value = false;
+    isOpenSecondModal.value = false;
+
+    toast.clear();
+    toast.add({
+      color: "green",
+      title: "Success data updated.",
+    });
+
+    resetFields();
+    loadPage();
+  } catch (e) {
+    toast.clear();
+    toast.add({
+      color: "red",
+      title: "Error updating user data",
+    });
+  }
+};
+
 const toggleItem = async (item) => {
   if (!item.type) {
     return;
@@ -284,7 +373,7 @@ const toggleItem = async (item) => {
   }
 
   if (item.type === "role") {
-    if (role.value === user.value.roleId) {
+    if (+role.value === user.value.roleId) {
       dataToUpdate.value.roleId = null;
       return;
     }
@@ -306,7 +395,8 @@ const resetFields = () => {
 const tryUpdate = async () => {
   if (
     !dataToUpdate.value.roleId &&
-    dataToUpdate.value.permissions.length <= 0
+    dataToUpdate.value.permissions.length <= 0 &&
+    dataToUpdate.value.roleId !== user.value.roleId
   ) {
     toast.clear();
     toast.add({
@@ -345,6 +435,14 @@ onMounted(async () => {
   if (managerStore.role.id <= user.value.roleId) {
     canEdit.value = true;
   }
+
+  const canToggle = managerStore.permissions.find(
+    (el) => el.permission.code === "toggle_manager_status"
+  );
+
+  if (canToggle) {
+    canToggleManager.value = true;
+  }
 });
 </script>
 
@@ -363,6 +461,8 @@ onMounted(async () => {
   justify-content: center;
   align-items: flex-start;
   gap: 10px;
+
+  position: relative;
 }
 
 .img {
@@ -443,6 +543,14 @@ h3 {
   align-items: center;
 
   gap: 2px;
+}
+
+.state {
+  position: absolute;
+}
+
+.state_card {
+  top: 10px;
 }
 
 .modalItem .modalPermission {

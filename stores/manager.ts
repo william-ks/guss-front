@@ -159,6 +159,25 @@ export const useManagerStore = defineStore("managerStore", () => {
     }
   };
 
+  const toggleManager = async (form: IToggleUser) => {
+    try {
+      await $fetch(
+        `${config.public.apiUrl}/master/manager/toggleStatus/${form.managerId}`,
+        {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token.value}`,
+          },
+          body: {
+            status: form.status,
+          },
+        }
+      );
+    } catch (e: any) {
+      throw new Error(e.data.message);
+    }
+  };
+
   const logOut = async () => {
     id.value = "";
     token.value = "";
@@ -181,6 +200,7 @@ export const useManagerStore = defineStore("managerStore", () => {
     readAll,
     readOther,
     updateSelf,
+    toggleManager,
     updateOther,
     login,
     readSelf,
@@ -191,6 +211,11 @@ export const useManagerStore = defineStore("managerStore", () => {
 interface ILogin {
   email: string;
   password: string;
+}
+
+interface IToggleUser {
+  managerId: string;
+  status: boolean;
 }
 
 interface IUpdateUser {

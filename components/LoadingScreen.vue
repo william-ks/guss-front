@@ -5,20 +5,26 @@
 </template>
 
 <script setup>
-const toggleScroll = () => {
+const toggleScroll = (state) => {
   const body = document.querySelector("body");
-  body.classList.toggle("lockScroll");
+  if (state) {
+    if (!body.classList.contains("lockScroll")) {
+      body.classList.add("lockScroll");
+    }
+
+    return;
+  }
+
+  if (body.classList.contains("lockScroll")) {
+    body.classList.remove("lockScroll");
+  }
 };
 
 const loadingScreen = useState("loadingScreen", () => false);
 
-onMounted(() => {
-  toggleScroll();
-});
-
-onUnmounted(() => {
-  toggleScroll();
-});
+watch(loadingScreen, (newVal, oldVal) => {
+  toggleScroll(loadingScreen.value);
+})
 </script>
 
 <style scoped>
