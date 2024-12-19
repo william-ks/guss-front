@@ -26,11 +26,10 @@
       <div class="group">
         <h3>
           <span class="highlight"> Name: </span>
-          <span v-if="!isEditing"> {{ user.name }}</span>
         </h3>
         <UInput
           class="inputCustom"
-          v-if="isEditing"
+          :disabled="!isEditing"
           type="name"
           v-model:model-value="nameEdit"
         />
@@ -39,41 +38,33 @@
       <div class="group">
         <h3>
           <span class="highlight">Cpf:</span>
-          <span v-if="!isEditing">{{ user.cpf }}</span>
         </h3>
         <UInput
           v-maska="'###.###.###-##'"
-          v-if="isEditing"
-          type="name"
+          :disabled="!isEditing"
+          type="text"
           v-model:model-value="cpfEdit"
         />
       </div>
 
-      <div class="group">
-        <h3>
-          <span class="highlight">Role:</span>
-          <span>
-            {{ user.role.title }}
-          </span>
-        </h3>
-      </div>
+      
 
       <div class="group">
         <h3>
           <span class="highlight">E-mail:</span>
-          <span v-if="!isEditing">{{ user.email }}</span>
+          
         </h3>
-        <UInput v-if="isEditing" type="email" v-model:model-value="emailEdit" />
+        <UInput :disabled="!isEditing" type="email" v-model:model-value="emailEdit" />
       </div>
 
       <div class="group">
         <h3>
           <span class="highlight">Birthday:</span>
-          <span v-if="!isEditing">{{ user.birthday || "00/00/0000" }}</span>
+          
         </h3>
         <div @click="() => (showPopover = true)">
           <UInput
-            v-if="isEditing"
+            :disabled="!isEditing"
             type="text"
             icon="material-symbols:edit-calendar-outline"
             v-maska="'##/##/####'"
@@ -90,6 +81,21 @@
             />
           </template>
         </UPopover>
+      </div>
+
+      <div class="group">
+        <h3>
+          <span class="highlight">Role:</span>
+          <span>
+            {{ user.role.title }}
+          </span>
+        </h3>
+
+        <UInput
+          disabled
+          type="text"
+          v-model:model-value="user.role.title"
+        />
       </div>
 
       <div class="w-[100%]">
@@ -154,7 +160,7 @@ const user = ref({
   photo:
     "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg",
   cpf: "Unknown",
-  role: { title: managerStore.role || "Unknown" },
+  role: { title: managerStore.role.title || "Unknown" },
   email: "unknown@example.com",
   birthday: "00/00/0000",
 });
