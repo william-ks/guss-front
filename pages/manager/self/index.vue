@@ -47,20 +47,20 @@
         />
       </div>
 
-      
-
       <div class="group">
         <h3>
           <span class="highlight">E-mail:</span>
-          
         </h3>
-        <UInput :disabled="!isEditing" type="email" v-model:model-value="emailEdit" />
+        <UInput
+          :disabled="!isEditing"
+          type="email"
+          v-model:model-value="emailEdit"
+        />
       </div>
 
       <div class="group">
         <h3>
           <span class="highlight">Birthday:</span>
-          
         </h3>
         <div @click="() => (showPopover = true)">
           <UInput
@@ -91,11 +91,7 @@
           </span>
         </h3>
 
-        <UInput
-          disabled
-          type="text"
-          v-model:model-value="user.role.title"
-        />
+        <UInput disabled type="text" v-model:model-value="user.role.title" />
       </div>
 
       <div class="w-[100%]">
@@ -166,20 +162,23 @@ const user = ref({
 });
 
 const loadingScreen = useState("loadingScreen");
+const uploadImage = ref();
 
 const handleFileIcon = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file[0]);
-
+  uploadImage.value = file[0];
   try {
-    loadingScreen.value = true;
-    const response = await uploadImage(formData);
-    photoEdit.value = response.link;
-  } catch (e) {
-    console.log(e);
-  } finally {
-    loadingScreen.value = false;
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      photoEdit.value = e.target.result;
+    };
+
+    reader.readAsDataURL(file[0]);
+  } catch (error) {
+    console.log(error);
+    console.log("não deu");
   }
+  return;
 };
 
 const formatDate = (date) => {
@@ -226,8 +225,24 @@ const updateUser = async () => {
       birthday: birthdayEdit.value,
     };
 
-    if(photoEdit.value){
-      form.photo = photoEdit.value
+    if (uploadImage.value) {
+      console.log("here");
+      const formData = new FormData();
+      formData.append("file", uploadImage.value);
+
+      try {
+        loadingScreen.value = true;
+        const response = await uploadImage(formData);
+        photoEdit.value = response.link;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        loadingScreen.value = false;
+      }
+    }
+
+    if (photoEdit.value) {
+      form.photo = photoEdit.value;
     }
 
     await managerStore.updateSelf(form);
