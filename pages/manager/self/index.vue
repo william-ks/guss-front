@@ -235,7 +235,7 @@ const updateUser = async () => {
         const response = await uploadImage(formData);
         photoEdit.value = response.link;
       } catch (e) {
-        console.log(e);
+        throw e;
       } finally {
         loadingScreen.value = false;
       }
