@@ -8,6 +8,10 @@
 </template>
 
 <script setup>
+import { usePublicStore } from "@/stores/public";
+
+const publicStore = usePublicStore();
+
 const darkActive = ref(false);
 const visibleMoon = ref(false);
 
@@ -21,8 +25,17 @@ const toggle = async () => {
     } else {
       colorMode.preference = "dark";
     }
+    updateColor();
     visibleMoon.value = !visibleMoon.value;
   }, 250);
+};
+
+const updateColor = () => {
+  const form = {
+    theme: colorMode.preference,
+  };
+
+  publicStore.updateColor(form);
 };
 
 onMounted(() => {
@@ -68,9 +81,7 @@ onMounted(() => {
   align-items: center;
   left: -5px;
   transform: rotate(0deg);
-  transition:
-    left 0.5s ease-in-out,
-    transform 0.5s ease-in-out;
+  transition: left 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 .iconBg.darkActive {

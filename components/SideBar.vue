@@ -9,10 +9,10 @@
           <NuxtLink to="/manager/dashboard"> Dashboard </NuxtLink>
         </li>
         <li>
-          <NuxtLink to=""> Students </NuxtLink>
+          <NuxtLink to="/manager/students/all"> Students </NuxtLink>
         </li>
         <li>
-          <NuxtLink to="/manager/all"> Managers </NuxtLink>
+          <NuxtLink to="/manager/users/all"> Managers </NuxtLink>
         </li>
       </ul>
     </nav>

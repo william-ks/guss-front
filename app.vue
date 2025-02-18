@@ -8,16 +8,16 @@
 
 <script setup>
 const appConfig = useAppConfig();
-const colorPrimary = localStorage.getItem("nuxt-ui-primary");
-const colorGray = localStorage.getItem("nuxt-ui-gray");
+const primaryColor = localStorage.getItem("nuxt-ui-primary");
+const grayColor = localStorage.getItem("nuxt-ui-gray");
 
-if (colorPrimary) {
-  appConfig.ui.primary = colorPrimary;
+if (primaryColor) {
+  appConfig.ui.primary = primaryColor;
 } else {
   localStorage.setItem("nuxt-ui-primary", appConfig.ui.primary);
 }
-if (colorGray) {
-  appConfig.ui.gray = colorGray;
+if (grayColor) {
+  appConfig.ui.gray = grayColor;
 } else {
   localStorage.setItem("nuxt-ui-gray", appConfig.ui.gray);
 }

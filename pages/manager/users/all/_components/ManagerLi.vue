@@ -36,11 +36,11 @@ const props = defineProps({
   manager: Object,
 });
 
-const nuxtTo = ref(`/manager/detail/${props.manager.publicId}`);
+const nuxtTo = ref(`/manager/users/detail/${props.manager.publicId}`);
 
 onMounted(() => {
   if (props.manager.publicId === managerStore.id) {
-    nuxtTo.value = `/manager/self`;
+    nuxtTo.value = `/manager/users/self`;
   }
 });
 </script>

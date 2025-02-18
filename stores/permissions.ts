@@ -4,18 +4,14 @@ import { useStorage } from "@vueuse/core";
 export const usePermissionStore = defineStore("permissionStore", () => {
   const config = useRuntimeConfig();
 
-  const token = useStorage("token", "", localStorage, {
-    mergeDefaults: true,
-  });
+
 
   const listAll = async () => {
     try {
       const data = await $fetch(
-        `${config.public.apiUrl}/master/permission/read/all`,
+        `${config.public.apiUrl}/permission/list`,
         {
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
+          credentials: "include",
         }
       );
 

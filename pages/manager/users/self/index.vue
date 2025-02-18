@@ -3,7 +3,7 @@
     <UiCard :shadow="true" :border="true" class="box">
       <div class="img relative">
         <NuxtImg :src="photoEdit || user.photo" />
-        <UPopover v-if="isEditing">
+        <UPopover overlay v-if="isEditing" v-model:open="openedPopover">
           <UButton
             rounded
             icon="i-heroicons-pencil-square"
@@ -29,7 +29,7 @@
         </h3>
         <UInput
           class="inputCustom"
-          :disabled="!isEditing"
+          :readonly="!isEditing"
           type="name"
           v-model:model-value="nameEdit"
         />
@@ -41,7 +41,7 @@
         </h3>
         <UInput
           v-maska="'###.###.###-##'"
-          :disabled="!isEditing"
+          :readonly="!isEditing"
           type="text"
           v-model:model-value="cpfEdit"
         />
@@ -52,7 +52,7 @@
           <span class="highlight">E-mail:</span>
         </h3>
         <UInput
-          :disabled="!isEditing"
+          :readonly="!isEditing"
           type="email"
           v-model:model-value="emailEdit"
         />
@@ -64,14 +64,14 @@
         </h3>
         <div @click="() => (showPopover = true)">
           <UInput
-            :disabled="!isEditing"
+            :readonly="!isEditing"
             type="text"
             icon="material-symbols:edit-calendar-outline"
             v-maska="'##/##/####'"
             v-model="birthdayEdit"
           />
         </div>
-        <UPopover v-model:open="showPopover">
+        <UPopover v-if="isEditing" overlay v-model:open="showPopover">
           <button></button>
           <template #panel>
             <UiDatePicker
@@ -86,9 +86,6 @@
       <div class="group">
         <h3>
           <span class="highlight">Role:</span>
-          <span>
-            {{ user.role.title }}
-          </span>
         </h3>
 
         <UInput disabled type="text" v-model:model-value="user.role.title" />
@@ -99,7 +96,7 @@
           <span class="highlight"> Authorizations: </span>
           <ul>
             <li v-for="permission of user.permissions" :key="permission.id">
-              - {{ permission.permission.name }}
+              - {{ permission }}
             </li>
           </ul>
         </h3>
@@ -145,6 +142,8 @@ const showPopover = ref(false);
 const selectedDate = ref(new Date());
 const isEditing = ref(false);
 
+const openedPopover = ref(false);
+
 const emailEdit = ref("");
 const nameEdit = ref("");
 const cpfEdit = ref("");
@@ -152,13 +151,9 @@ const photoEdit = ref("");
 const birthdayEdit = ref("");
 
 const user = ref({
-  name: "Unknown",
   photo:
     "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg",
-  cpf: "Unknown",
   role: { title: managerStore.role.title || "Unknown" },
-  email: "unknown@example.com",
-  birthday: "00/00/0000",
 });
 
 const loadingScreen = useState("loadingScreen");
@@ -174,9 +169,14 @@ const handleFileIcon = async (file) => {
     };
 
     reader.readAsDataURL(file[0]);
+
+    openedPopover.value = false;
   } catch (error) {
-    console.log(error);
-    console.log("não deu");
+    toast.clear();
+    toast.add({
+      title: "Error",
+      message: "Error uploading image, please try again",
+    });
   }
   return;
 };
@@ -226,14 +226,14 @@ const updateUser = async () => {
     };
 
     if (uploadImage.value) {
-      console.log("here");
       const formData = new FormData();
       formData.append("file", uploadImage.value);
 
       try {
         loadingScreen.value = true;
-        const response = await uploadImage(formData);
-        photoEdit.value = response.link;
+        const response = await managerStore.uploadPhoto(formData);
+
+        photoEdit.value = `${response}`;
       } catch (e) {
         throw e;
       } finally {
@@ -247,8 +247,11 @@ const updateUser = async () => {
 
     await managerStore.updateSelf(form);
     showToast("User has been updated.");
+    resetFields();
     await getUserData();
     isEditing.value = false;
+
+    loadingScreen.value = false;
   } catch (error) {
     toast.clear();
     toast.add({
@@ -273,6 +276,7 @@ const getUserData = async () => {
     nameEdit.value = data.name;
     cpfEdit.value = data.cpf;
     birthdayEdit.value = data.birthday || "00/00/0000";
+
   } catch (error) {
     toast.clear();
     toast.add({
@@ -282,6 +286,12 @@ const getUserData = async () => {
     });
   }
 };
+
+watch(showPopover, (nVal, oldVal) => {
+  if (!isEditing.value) {
+    showPopover.value = false;
+  }
+});
 
 onMounted(() => {
   const actualPage = useState("actualPage");

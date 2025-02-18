@@ -36,6 +36,6 @@ main {
 }
 
 footer {
-  @apply border-t-[1px] border-primary-300 dark:border-primary-500 bg-white dark:bg-gray-900 shadow-[0_-5px_10px_hsl(var(--shadow))];
+  @apply bg-white dark:bg-gray-900 shadow-[0_-5px_10px_hsl(var(--shadow))];
 }
 </style>

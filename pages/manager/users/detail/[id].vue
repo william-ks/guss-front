@@ -55,7 +55,7 @@
           <span class="highlight"> Permissions: </span>
           <ul>
             <li v-for="permission of user.permissions" :key="permission.id">
-              - {{ permission.permission.name }}
+              - {{ permission }}
             </li>
           </ul>
         </h3>
@@ -86,10 +86,13 @@
         <div class="modalItem">
           <h3>Role:</h3>
 
-          <USelect
+          <USelectMenu
+            searchable
+            searchable-placeholder="Search a person..."
             @change="toggleItem({ type: 'role' })"
             v-model="role"
             :options="roles"
+            placeholder="Role"
             option-attribute="name"
           />
         </div>
@@ -102,11 +105,25 @@
                 <input
                   type="checkbox"
                   class="checkbox"
-                  v-model="permission.selected"
                   :id="`checkbox${permission.id}`"
-                  @click="toggleItem({ type: 'permission', id: permission.id })"
+                  :checked="permission.selected"
+                  @click="
+                    toggleItem({
+                      type: 'permission',
+                      id: permission.id,
+                      code: permission.code,
+                      disabled: permission.disabled,
+                    })
+                  "
                 />
-                <div class="modalPermission">{{ permission.name }}</div>
+                <div
+                  :class="{
+                    modalPermission: true,
+                    disabled: permission.disabled,
+                  }"
+                >
+                  {{ permission.name }}
+                </div>
               </label>
             </li>
           </ul>
@@ -166,6 +183,9 @@
 import { useManagerStore } from "@/stores/manager";
 import { useRoleStore } from "@/stores/roles";
 import { usePermissionStore } from "@/stores/permissions";
+import { ref, onMounted } from "vue";
+import { useRoute, useState, useToast } from "#imports";
+
 const managerStore = useManagerStore();
 const roleStore = useRoleStore();
 const permissionStore = usePermissionStore();
@@ -175,36 +195,15 @@ const isOpenModal = ref(false);
 const isOpenSecondModal = ref(false);
 const canEdit = ref(false);
 const canToggleManager = ref(false);
-
 const redButton = ref(false);
 
 const { params } = useRoute();
 const id = params.id;
 
 const roles = ref([]);
-const role = ref(0);
-
-const dataToUpdate = ref({
-  roleId: null,
-  permissions: [],
-});
-
+const role = ref();
+const dataToUpdate = ref({ roleId: null, permissions: [] });
 const permissionsRef = ref([]);
-
-const openToggleModal = () => {
-  if (!canToggleManager.value) {
-    toast.clear();
-    toast.add({
-      title: "Unauthorized",
-      description: "You don't have this permission.",
-      color: "red",
-    });
-
-    return;
-  }
-
-  isOpenSecondModal.value = true;
-};
 
 const user = ref({
   name: "Unknown",
@@ -217,40 +216,38 @@ const user = ref({
   isActive: true,
 });
 
+const openToggleModal = () => {
+  if (!canToggleManager.value) {
+    toast.clear();
+    toast.add({
+      title: "Unauthorized",
+      description: "You don't have this permission.",
+      color: "red",
+    });
+    return;
+  }
+  isOpenSecondModal.value = true;
+};
+
 const getUserData = async () => {
   try {
     const data = await managerStore.readOther(id);
     user.value = data;
+
     if (!data.photo) {
       user.value.photo =
         "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg";
     }
 
-    role.value = data.roleId;
+    roles.value = roles.value.map((el) =>
+      el.value < managerStore.role.id ? { ...el, disabled: true } : el
+    );
 
-    roles.value = roles.value.map((el) => {
-      if (el.value < managerStore.role.id) {
-        return { ...el, disabled: true };
-      }
+    role.value = roles.value.find((el) => el.value === data.roleId);
 
-      return el;
-    });
-
-    permissionsRef.value = permissionsRef.value.map((el) => {
-      const findPermissions = data.permissions.find((e) => {
-        return e.permissionId === el.id;
-      });
-
-      if (findPermissions) {
-        return {
-          ...el,
-          selected: true,
-        };
-      } else {
-        return { ...el };
-      }
-    });
-
+    permissionsRef.value = permissionsRef.value.map((el) =>
+      data.permissions.includes(el.code) ? { ...el, selected: true } : el
+    );
     actualPage.value = `${data.name.split(" ")[0]} Account`;
   } catch (error) {
     toast.clear();
@@ -265,29 +262,21 @@ const getUserData = async () => {
 const getRoles = async () => {
   const data = await roleStore.listAll();
   if (data) {
-    roles.value = data.map((el) => {
-      return {
-        name: el.title,
-        value: el.id,
-      };
-    });
+    roles.value = data.map((el) => ({ name: el.title, value: el.id }));
   }
 };
 
 const getPermissions = async () => {
   const data = await permissionStore.listAll();
   permissionsRef.value = data.map((el) => {
-    return {
-      id: el.id,
-      name: el.name,
-      selected: false,
-    };
+    const userHaveThisPermission = managerStore.permissions.includes(el.code);
+    return { ...el, disabled: !userHaveThisPermission, selected: false };
   });
 };
 
 const loadPage = async () => {
-  await getPermissions();
   await getRoles();
+  await getPermissions();
   await getUserData();
 };
 
@@ -297,99 +286,70 @@ const toggleManager = async (status) => {
       managerId: user.value.publicId,
       status,
     });
-
     isOpenModal.value = false;
     isOpenSecondModal.value = false;
-
     toast.clear();
-    toast.add({
-      color: "green",
-      title: "Success data updated.",
-    });
-
+    toast.add({ color: "green", title: "Success data updated." });
     resetFields();
     loadPage();
   } catch (e) {
     toast.clear();
-    toast.add({
-      color: "red",
-      title: "Error updating user data",
-    });
+    toast.add({ color: "red", title: "Error updating user data" });
   }
 };
 
-const toggleItem = async (item) => {
-  if (!item.type) {
-    return;
-  }
+const toggleItem = (item) => {
+  if (!item.type) return;
 
   if (item.type === "permission") {
-    const managerHaveThisPermission = managerStore.permissions.find((el) => {
-      return el.permissionId === item.id;
-    });
-
-    if (!managerHaveThisPermission) {
+    if (item.disabled) {
       toast.clear();
       toast.add({
         color: "red",
         title: "You should only edit permissions that you have.",
         description: "And you don't have this permission",
       });
-
-      permissionsRef.value = permissionsRef.value.map((el) => {
-        if (el.id === item.id) {
-          return {
-            ...el,
-            selected: el.selected,
-          };
-        }
-
-        return el;
-      });
-    }
-
-    const alreadyExists = dataToUpdate.value.permissions.find((el) => {
-      return el.id === item.id;
-    });
-
-    if (alreadyExists) {
-      dataToUpdate.value.permissions = dataToUpdate.value.permissions.filter(
-        (el) => el.id !== item.id
+      document.querySelector(`#checkbox${item.id}`).checked = false;
+      permissionsRef.value = permissionsRef.value.map((el) =>
+        el.code === item.code
+          ? {
+              ...el,
+              selected: document.querySelector(`#checkbox${item.id}`).checked,
+            }
+          : el
       );
       return;
     }
 
-    const userAlreadyHaveThisPermission = user.value.permissions.find((el) => {
-      return el.permissionId === item.id;
-    });
+    const alreadyExists = dataToUpdate.value.permissions.find(
+      (el) => el.code === item.code
+    );
+    if (alreadyExists) {
+      dataToUpdate.value.permissions = dataToUpdate.value.permissions.filter(
+        (el) => el.code !== item.code
+      );
+      return;
+    }
 
+    const userAlreadyHaveThisPermission = user.value.permissions.includes(
+      item.code
+    );
     dataToUpdate.value.permissions.push({
-      id: item.id,
-      toAdd: !userAlreadyHaveThisPermission ? true : false,
-      toRemove: userAlreadyHaveThisPermission ? true : false,
+      code: item.code,
+      toAdd: !userAlreadyHaveThisPermission,
+      toRemove: userAlreadyHaveThisPermission,
     });
-
     return;
   }
 
   if (item.type === "role") {
-    if (+role.value === user.value.roleId) {
-      dataToUpdate.value.roleId = null;
-      return;
-    }
-
-    dataToUpdate.value.roleId = +role.value;
-    return;
+    dataToUpdate.value.roleId =
+      +role.value === user.value.roleId ? null : +role.value.value;
   }
 };
 
 const resetFields = () => {
-  dataToUpdate.value = {
-    roleId: null,
-    permissions: [],
-  };
-  isOpenModal.value = false;
-  loadPage();
+  dataToUpdate.value = { roleId: null, permissions: [] };  
 };
 
 const tryUpdate = async () => {
@@ -404,45 +364,29 @@ const tryUpdate = async () => {
       title: "Warning",
       description: "To update user, you first need change anything.",
     });
-
     return;
   }
 
   try {
     await managerStore.updateOther(dataToUpdate.value, user.value.publicId);
-
     toast.clear();
-    toast.add({
-      color: "green",
-      title: "Success data updated.",
-    });
-
+    toast.add({ color: "green", title: "Success data updated." });
+    isOpenModal.value = false;
     resetFields();
     loadPage();
   } catch (e) {
     toast.clear();
-    toast.add({
-      color: "red",
-      title: "Error updating user data",
-    });
+    toast.add({ color: "red", title: "Error updating user data" });
   }
 };
 
 onMounted(async () => {
   actualPage.value = `Account`;
   await loadPage();
-
-  if (managerStore.role.id <= user.value.roleId) {
-    canEdit.value = true;
-  }
-
-  const canToggle = managerStore.permissions.find(
-    (el) => el.permission.code === "toggle_manager_status"
+  canEdit.value = managerStore.role.points >= user.value.role.points;
+  canToggleManager.value = managerStore.permissions.includes(
+    "POST_api_manager_toogle_status_:id"
   );
-
-  if (canToggle) {
-    canToggleManager.value = true;
-  }
 });
 </script>
 
@@ -565,7 +509,12 @@ h3 {
   font-weight: 300;
   /* box-shadow: 0 5px 10px black; */
 
-  @apply dark:border-gray-800 dark:bg-gray-800 dark:opacity-90 opacity-80 shadow-[0_5px_5px_hsl(var(--shadow))] text-gray-600 border-gray-200 bg-gray-100;
+  @apply dark:border-gray-800 dark:bg-gray-800 dark:opacity-95 opacity-85 shadow-[0_5px_5px_hsl(var(--shadow))] text-gray-600 border-gray-200 bg-gray-100;
+}
+
+.modalItem .modalPermission.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 .modalItem input:not(:checked) ~ .modalPermission {

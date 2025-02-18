@@ -16,7 +16,7 @@ export const useManagerStore = defineStore("managerStore", () => {
     mergeDefaults: true,
   });
 
-  const email = useStorage("managerEmail", "", localStorage, {
+  const email = useStorage("student", "", localStorage, {
     mergeDefaults: true,
   });
 
@@ -28,26 +28,21 @@ export const useManagerStore = defineStore("managerStore", () => {
     mergeDefaults: true,
   });
 
-  const token = useStorage("token", "", localStorage, { mergeDefaults: true });
-
   const login = async (props: ILogin) => {
     if (!props.email && !props.password) {
       throw new Error("Por favor Preencha todos os campos");
     }
 
     try {
-      const data: any = await $fetch(
-        `${config.public.apiUrl}/master/manager/login`,
-        {
-          method: "POST",
-          body: {
-            email: props.email,
-            password: props.password,
-          },
-        }
-      );
+      const data: any = await $fetch(`${config.public.apiUrl}/manager/login`, {
+        method: "POST",
+        credentials: "include",
+        body: {
+          email: props.email,
+          password: props.password,
+        },
+      });
 
-      token.value = data.token;
       id.value = data.user.id;
       name.value = data.user.name;
       email.value = data.user.email;
@@ -57,6 +52,8 @@ export const useManagerStore = defineStore("managerStore", () => {
 
       return "/manager/dashboard";
     } catch (e: any) {
+      console.log(e);
+      
       throw new Error(e.response._data.message);
     }
   };
@@ -64,17 +61,33 @@ export const useManagerStore = defineStore("managerStore", () => {
   const readSelf = async () => {
     try {
       const data: any = await $fetch(
-        `${config.public.apiUrl}/master/manager/read/self`,
+        `${config.public.apiUrl}/manager/read/self`,
         {
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
+          credentials: "include",
         }
       );
+
+      const colorMode = useColorMode();
+      const appConfig = useAppConfig();
+
+      if (data.theme) {
+        colorMode.preference = data.theme;
+      }
+
+      if (data.primaryColor) {
+        appConfig.ui.primary = data.primaryColor;
+      }
+
+      if (data.grayColor) {
+        appConfig.ui.gray = data.grayColor;
+      }
 
       name.value = data.name;
       email.value = data.email;
       photo.value = data.photo;
+      if (data.photo) {
+        console.log("foto atualizada");
+      }
       role.value = data.role;
       permissions.value = data.permissions;
 
@@ -87,14 +100,9 @@ export const useManagerStore = defineStore("managerStore", () => {
   const readAll = async () => {
     const toast = useToast();
     try {
-      const found = await $fetch(
-        `${config.public.apiUrl}/master/manager/read/all`,
-        {
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
-        }
-      );
+      const found = await $fetch(`${config.public.apiUrl}/manager/read/all`, {
+        credentials: "include",
+      });
 
       return found;
     } catch (e) {
@@ -110,11 +118,9 @@ export const useManagerStore = defineStore("managerStore", () => {
   const readOther = async (id: string) => {
     try {
       const data = await $fetch(
-        `${config.public.apiUrl}/master/manager/read/other/${id}`,
+        `${config.public.apiUrl}/manager/read/other/${id}`,
         {
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
+          credentials: "include",
         }
       );
 
@@ -126,11 +132,9 @@ export const useManagerStore = defineStore("managerStore", () => {
 
   const updateSelf = async (form: IUpdateUser) => {
     try {
-      await $fetch(`${config.public.apiUrl}/master/manager/update/self`, {
+      await $fetch(`${config.public.apiUrl}/manager/update/self`, {
         method: "PUT",
-        headers: {
-          authorization: `Bearer ${token.value}`,
-        },
+        credentials: "include",
         body: {
           ...form,
         },
@@ -142,18 +146,13 @@ export const useManagerStore = defineStore("managerStore", () => {
 
   const updateOther = async (form: IUpdateOther, otherId: string) => {
     try {
-      await $fetch(
-        `${config.public.apiUrl}/master/manager/update/other/${otherId}`,
-        {
-          method: "PUT",
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
-          body: {
-            ...form,
-          },
-        }
-      );
+      await $fetch(`${config.public.apiUrl}/manager/update/other/${otherId}`, {
+        method: "PUT",
+        credentials: "include",
+        body: {
+          ...form,
+        },
+      });
     } catch (e: any) {
       throw new Error(e.data.message);
     }
@@ -162,12 +161,10 @@ export const useManagerStore = defineStore("managerStore", () => {
   const toggleManager = async (form: IToggleUser) => {
     try {
       await $fetch(
-        `${config.public.apiUrl}/master/manager/toggleStatus/${form.managerId}`,
+        `${config.public.apiUrl}/manager/toogle/status/${form.managerId}`,
         {
           method: "POST",
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
+          credentials: "include",
           body: {
             status: form.status,
           },
@@ -178,15 +175,33 @@ export const useManagerStore = defineStore("managerStore", () => {
     }
   };
 
+  const uploadPhoto = async (formdata: FormData) => {
+    const link = await $fetch(`${config.public.apiUrl}/image/upload`, {
+      method: "POST",
+      credentials: "include",
+      body: formdata,
+    });
+
+    return link;
+  };
+
   const logOut = async () => {
-    id.value = "";
-    token.value = "";
-    photo.value = "";
-    name.value = "";
-    email.value = "";
-    role.value = {};
-    permissions.value = [];
-    navigateTo("/");
+    try {
+      await $fetch(`${config.public.apiUrl}/public/signout`, {
+        method: "GET",
+        credentials: "include",
+      });
+      id.value = "";
+
+      photo.value = "";
+      name.value = "";
+      email.value = "";
+      role.value = {};
+      permissions.value = [];
+      navigateTo("/");
+    } catch (e) {
+      console.log("erro ao sair");
+    }
   };
 
   return {
@@ -195,7 +210,6 @@ export const useManagerStore = defineStore("managerStore", () => {
     email,
     photo,
     role,
-    token,
     permissions,
     readAll,
     readOther,
@@ -203,6 +217,7 @@ export const useManagerStore = defineStore("managerStore", () => {
     toggleManager,
     updateOther,
     login,
+    uploadPhoto,
     readSelf,
     logOut,
   };

@@ -36,8 +36,11 @@ const { shadow, border } = defineProps({
 } */
 
 .card.cBorder {
-  border: 1px solid hsl(var(--border));
+  border: 1px solid hsl(var(--card-bg));
+}
 
+.card.cBorder:hover {
+  border: 1px solid hsl(var(--card-bg));
   @apply border-primary-300 dark:border-primary-500;
 }
 </style>

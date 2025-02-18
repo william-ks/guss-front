@@ -1,14 +1,21 @@
 <template>
   <div class="center">
     <div class="g">
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
-      <ButtonBox />
+      <ButtonBox
+        link="/manager/users/all"
+        icon="hugeicons:manager"
+        title="Managers"
+      />
+
+      <ButtonBox link="/" icon="hugeicons:hierarchy" title="Roles" />
+
+      <ButtonBox
+        link="/manager/students/all"
+        icon="ph:student"
+        title="Students"
+      />
+
+      <ButtonBox link="/" icon="lineicons:blackboard" title="Classes" />
     </div>
   </div>
 </template>
@@ -34,7 +41,7 @@ onMounted(() => {
 .g {
   width: 100%;
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
 }
 </style>

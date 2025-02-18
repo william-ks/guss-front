@@ -10,14 +10,12 @@ export const useRoleStore = defineStore("roleStore", () => {
 
   const listAll = async () => {
     try {
-      const data = await $fetch(
-        `${config.public.apiUrl}/master/role/read/all`,
-        {
-          headers: {
-            authorization: `Bearer ${token.value}`,
-          },
-        }
-      );
+      const data = await $fetch(`${config.public.apiUrl}/role/read/all`, {
+        headers: {
+          authorization: `Bearer ${token.value}`,
+        },
+        credentials: "include",
+      });
 
       return data;
     } catch (e) {

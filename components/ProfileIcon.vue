@@ -14,7 +14,7 @@ const items = [
     {
       label: "My Account",
       icon: "i-heroicons-cog-8-tooth",
-      click: () => navigateTo("/manager/self"),
+      click: () => navigateTo("/manager/users/self"),
     },
   ],
   [
@@ -25,6 +25,14 @@ const items = [
     },
   ],
 ];
+
+const photo = computed(() => {
+  return managerStore.photo;
+});
+
+onMounted(() => {
+  managerStore.readSelf();
+});
 </script>
 
 <template>
@@ -33,7 +41,12 @@ const items = [
     :ui="{ item: { disabled: 'cursor-text select-text' } }"
     :popper="{ placement: 'bottom-start', arrow: true }"
   >
-    <UAvatar :src="managerStore.photo || 'https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg'" />
+    <UAvatar
+      :src="
+        photo ||
+        'https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg'
+      "
+    />
 
     <template #account="{ item }">
       <div class="text-left">

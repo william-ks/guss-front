@@ -1,6 +1,6 @@
 <template>
   <header
-    class="border-b-[1px] border-primary-300 dark:border-primary-500 bg-white dark:bg-gray-900 shadow-[0_5px_10px_hsl(var(--shadow))]"
+    class=" bg-white dark:bg-gray-900 shadow-[0_5px_10px_hsl(var(--shadow))]"
   >
     <UContainer class="py-[15px]">
       <div class="flex justify-between items-center">

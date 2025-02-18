@@ -2,7 +2,7 @@
   <div class="center">
     <UiCard :shadow="true" :border="true" class="box">
       <div class="w-[100%] flex justify-end mb-7">
-        <NuxtLink to="/manager/create">
+        <NuxtLink to="/manager/users/create">
           <UButton icon="material-symbols:add"> New manager </UButton>
         </NuxtLink>
       </div>
@@ -22,7 +22,6 @@ import { useManagerStore } from "@/stores/manager";
 import ManagerLi from "./_components/ManagerLi";
 
 const managerStore = useManagerStore();
-const toast = useToast();
 const managersList = ref([]);
 
 const getManagers = async () => {

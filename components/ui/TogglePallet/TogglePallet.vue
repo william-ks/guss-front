@@ -49,6 +49,9 @@
 </template>
 
 <script setup>
+import { usePublicStore } from "@/stores/public";
+
+const publicStore = usePublicStore();
 const appConfig = useAppConfig();
 
 const colors = [
@@ -76,13 +79,23 @@ const grayColors = ["slate", "cool", "zinc", "neutral", "stone"];
 const setPrimaryColor = (color) => {
   appConfig.ui.primary = color;
   localStorage.setItem("nuxt-ui-primary", appConfig.ui.primary);
+  updateColor();
 };
 
 const setGrayColor = (color) => {
   appConfig.ui.gray = color;
   localStorage.setItem("nuxt-ui-gray", appConfig.ui.gray);
+  updateColor();
 };
 
+const updateColor = () => {
+  const form = {
+    primaryColor: appConfig.ui.primary,
+    grayColor: appConfig.ui.gray,
+  };
+
+  publicStore.updateColor(form);
+};
 </script>
 
 <style scoped>

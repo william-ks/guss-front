@@ -1,13 +1,29 @@
 <template>
-  <UiCard :shadow="true" :border="true" class="buttonBox">
-    <div class="icon">
-      <UIcon name="ph:student" />
-    </div>
-    <h3>Students</h3>
-  </UiCard>
+  <NuxtLink :to="props.link">
+    <UiCard :shadow="true" :border="true" class="buttonBox">
+      <div class="icon">
+        <UIcon :name="icon" />
+      </div>
+      <h3>{{ props.title }}</h3>
+    </UiCard>
+  </NuxtLink>
 </template>
 
 <script setup>
+const props = defineProps({
+  link: {
+    default: "/",
+    type: String,
+  },
+  icon: {
+    default: "ph:student",
+    type: String,
+  },
+  title: {
+    default: "Title",
+    type: String,
+  },
+});
 </script>
 
 <style scoped>

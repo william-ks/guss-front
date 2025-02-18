@@ -28,7 +28,9 @@ watch(
   (newValue) => {
     visible.value = newValue;
     if (newValue) {
-      toggleScroll();
+      toggleScroll(true);
+    } else {
+      toggleScroll(false);
     }
   }
 );
@@ -36,21 +38,27 @@ watch(
 // Função para fechar o modal
 const closeModal = () => {
   visible.value = false; // Atualiza o estado interno
-  toggleScroll();
+  toggleScroll(false);
   // Sincroniza com o componente pai
   emit("update:modelValue", false);
 };
 
 // Alterna o scroll da página
-const toggleScroll = () => {
-  const body = document.querySelector("body");
-  body.classList.toggle("lockScroll");
+const toggleScroll = (lock) => {
+  const body = document.body;
+  if (lock) {
+    if (!body.classList.contains("lockscroll")) {
+      body.classList.add("lockscroll");
+    }
+  } else {
+    body.classList.remove("lockscroll");
+  }
 };
 
 // Inicializa o estado ao montar o componente
 onMounted(() => {
   if (visible.value) {
-    toggleScroll();
+    toggleScroll(true);
   }
 });
 </script>

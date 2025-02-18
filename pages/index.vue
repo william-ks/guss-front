@@ -53,16 +53,64 @@ const toast = useToast();
 const appConfig = useAppConfig();
 
 import { useManagerStore } from "@/stores/manager";
+import { useStudentStore } from "@/stores/student";
 const managerStore = useManagerStore();
+const studentStore = useStudentStore();
 
 const form = ref();
 
 const type = ref("student");
 
-const submit = async () => {
+const loginStudent = async () => {
+  try {
+    const link = await studentStore.login({
+      email: form.value.data.email,
+      password: form.value.data.password,
+    });
+
+
+    navigateTo(link);
+  } catch (e) {
+    toast.clear();
+    toast.add({
+      color: "red",
+      title: e.message,
+      description: "Please try again.",
+      icon: "ph:warning",
+      timeout: 3000,
+    });
+  }
+};
+
+const loginManager = async () => {
   try {
     const link = await managerStore.login({
-      type: type.value,
+      email: form.value.data.email,
+      password: form.value.data.password,
+    });
+
+    navigateTo(link);
+  } catch (e) {
+    toast.clear();
+    toast.add({
+      color: "red",
+      title: e.message,
+      description: "Please try again.",
+      icon: "ph:warning",
+      timeout: 3000,
+    });
+  }
+};
+
+const submit = async () => {
+  try {
+    if (type.value === "student") {
+      return loginStudent();
+    }
+
+    return loginManager();
+
+    const link = await managerStore.login({
       email: form.value.data.email,
       password: form.value.data.password,
     });
