@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="center">
-      <UiCard border shadow class="box">
+      <UiCard border="full" shadow class="box">
         <h2 class="text-center mb-5 text-3xl">Welcome {{ type }}!</h2>
         <div class="group">
           <label for="student" class="label">

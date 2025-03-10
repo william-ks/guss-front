@@ -36,6 +36,8 @@ main {
 }
 
 footer {
+  z-index: 2;
+  position: relative;
   @apply bg-white dark:bg-gray-900 shadow-[0_-5px_10px_hsl(var(--shadow))];
 }
 </style>

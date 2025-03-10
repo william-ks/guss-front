@@ -85,9 +85,6 @@ export const useManagerStore = defineStore("managerStore", () => {
       name.value = data.name;
       email.value = data.email;
       photo.value = data.photo;
-      if (data.photo) {
-        console.log("foto atualizada");
-      }
       role.value = data.role;
       permissions.value = data.permissions;
 

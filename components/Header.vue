@@ -1,6 +1,6 @@
 <template>
   <header
-    class=" bg-white dark:bg-gray-900 shadow-[0_5px_10px_hsl(var(--shadow))]"
+    class="bg-white dark:bg-gray-900 shadow-[0_5px_10px_hsl(var(--shadow))]"
   >
     <UContainer class="py-[15px]">
       <div class="flex justify-between items-center">
@@ -38,6 +38,8 @@ const props = defineProps({
 <style scoped>
 header {
   width: 100%;
+  z-index: 2;
+  position: relative;
   /* box-shadow: 0 5px 10px hsl(var(--shadow)); */
   /* background-color: hsl(var(--card-bg)); */
 }

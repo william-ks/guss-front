@@ -15,7 +15,17 @@
         title="Students"
       />
 
-      <ButtonBox link="/" icon="lineicons:blackboard" title="Classes" />
+      <ButtonBox
+        link="/manager/classroom/all"
+        icon="lineicons:blackboard"
+        title="Classes"
+      />
+
+      <ButtonBox
+        link="/manager/schedules/all"
+        icon="material-symbols:calendar-month-outline"
+        title="Schedules"
+      />
     </div>
   </div>
 </template>

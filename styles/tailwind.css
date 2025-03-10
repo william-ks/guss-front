@@ -73,7 +73,7 @@
   *::-webkit-scrollbar {
     /* width: 0.55rem;
     height: 6px; */
-    width: 0.7rem;
+    width: 0.6rem;
     @apply bg-gray-200 dark:bg-gray-950;
   }
 

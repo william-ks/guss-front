@@ -473,10 +473,14 @@ h3 {
 
 .modalItem .permissions {
   width: 100%;
+  /*
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 
