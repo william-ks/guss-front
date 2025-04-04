@@ -1,25 +1,16 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard class="box">
       <div class="img relative">
         <NuxtImg :src="photoRef || defaultImage" />
 
         <UPopover overlay v-model:open="imagePopover">
-          <UButton
-            rounded
-            icon="i-heroicons-pencil-square"
-            class="absolute top-[-20px] right-[30px]"
-          >
+          <UButton rounded icon="i-heroicons-pencil-square" class="absolute top-[-20px] right-[30px]">
             Edit Image
           </UButton>
 
           <template #panel>
-            <UInput
-              @change="handleFileIcon"
-              type="file"
-              size="sm"
-              icon="i-heroicons-folder"
-            />
+            <UInput @change="handleFileIcon" type="file" size="sm" icon="i-heroicons-folder" />
           </template>
         </UPopover>
       </div>
@@ -33,14 +24,8 @@
 
           <div class="item">
             <p class="text-sm font-extralight mb-1">Role (required)</p>
-            <USelectMenu
-              v-model="form.roleId"
-              searchable
-              searchable-placeholder="Search a role..."
-              :options="roles"
-              placeholder="Role"
-              option-attribute="name"
-            />
+            <USelectMenu v-model="form.role" searchable searchable-placeholder="Search a role..." :options="roles"
+              placeholder="Role" option-attribute="name" />
           </div>
         </div>
 
@@ -51,36 +36,20 @@
 
         <div class="item">
           <p class="text-sm font-extralight mb-1">CPF (required)</p>
-          <UInput
-            v-model="form.cpf"
-            type="text"
-            v-maska="'###.###.###-##'"
-            placeholder="000.000.000-00"
-          />
+          <UInput v-model="form.cpf" type="text" v-maska="'###.###.###-##'" placeholder="000.000.000-00" />
         </div>
 
         <div class="flex flex-col gap-3 sm:gap-5 sm:flex-row">
           <div class="item">
             <p class="text-sm font-extralight mb-1">Birthday (optional)</p>
             <div class="flex w-[100%]">
-              <UInput
-                @click="() => (showDatePicker = true)"
-                v-model="form.birthday"
-                readonly
-                class="w-[100%]"
-                type="text"
-                v-maska="'##/##/####'"
-                icon="material-symbols:edit-calendar-outline"
-                placeholder="00/00/0000"
-              />
+              <UInput @click="showDatePicker = true" v-model="form.birthday" readonly class="w-[100%]" type="text"
+                v-maska="'##/##/####'" icon="material-symbols:edit-calendar-outline" placeholder="00/00/0000" />
 
               <UPopover overlay v-model:open="showDatePicker">
                 <button></button>
                 <template #panel>
-                  <UiDatePicker
-                    v-model:model-value="selectedDate"
-                    @update:model-value="updateDate"
-                  />
+                  <UiDatePicker v-model:model-value="selectedDate" @update:model-value="updateDate" />
                 </template>
               </UPopover>
             </div>
@@ -88,12 +57,7 @@
 
           <div class="item">
             <p class="text-sm font-extralight mb-1">Phone (optional)</p>
-            <UInput
-              v-model="form.phone"
-              type="text"
-              v-maska="'(##) #####-####'"
-              placeholder="(00) 00000-0000"
-            />
+            <UInput v-model="form.phone" type="text" v-maska="'(##) #####-####'" placeholder="(00) 00000-0000" />
           </div>
         </div>
       </div>
@@ -108,6 +72,7 @@
 <script setup>
 import { useRoleStore } from "@/stores/roles";
 import { useManagerStore } from "@/stores/manager";
+const toast = useToast();
 
 const roleStore = useRoleStore();
 const managerStore = useManagerStore();
@@ -118,19 +83,22 @@ const imagePopover = ref(false);
 const showDatePicker = ref(false);
 const selectedDate = ref(new Date());
 
+const uploadImage = ref();
+
 const defaultImage =
   "https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg";
 
 const roles = ref([]);
 
 const form = ref({
-  name: "",
-  email: "",
-  cpf: "",
+  name: "Ray",
+  email: "rs@gmail.com",
+  cpf: "020.088.306-24",
   address: "",
   phone: "",
   birthday: "",
-  roleId: null,
+  role: null,
+  photo: null
 });
 
 const closeDateModel = () => {
@@ -138,12 +106,54 @@ const closeDateModel = () => {
 };
 
 const updateDate = () => {
-  console.log(selectedDate.value);
+  form.value.birthday = selectedDate.value.toLocaleDateString();
   closeDateModel();
 };
 
-const submit = () => {
-  console.log(form.value);
+const submit = async () => {
+  try {
+    if (uploadImage.value) {
+      const formData = new FormData();
+      formData.append("file", uploadImage.value);
+
+      try {
+        loadingScreen.value = true;
+        const response = await managerStore.uploadPhoto(formData);
+
+        photoRef.value = `${response}`;
+      } catch (e) {
+        throw e;
+      } finally {
+        loadingScreen.value = false;
+      }
+    }
+
+
+
+    await managerStore.create({
+      name: form.value.name,
+      email: form.value.email,
+      cpf: form.value.cpf,
+      roleId: form.value.role.value,
+      birthday: form.value.birthday ? form.value.birthday : null,
+      photo: photoRef.value ?? null,
+    });
+
+    toast.clear();
+    toast.add({
+      title: "Success",
+      description: `${form.value.role.name ?? 'User'} created successfully`,
+    });
+    navigateTo('/manager/users/all')
+  } catch (e) {
+    console.log(e);
+    toast.clear();
+    toast.add({
+      title: "Error",
+      description: "error",
+      color: 'red'
+    });
+  }
 };
 
 const handleFileIcon = async (file) => {
@@ -178,11 +188,12 @@ const getRoles = async () => {
 
       return {
         name: el.title,
-        value: el.id,
+        value: +el.id,
         disabled: el.points > managerStore.role.points,
       };
     });
-  } catch (e) {}
+
+  } catch (e) { }
 };
 
 onMounted(() => {

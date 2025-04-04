@@ -4,30 +4,29 @@
       <div class="relative">
         <h2 class="text-center text-2xl">Default models</h2>
         <div class="absolute top-0 right-[5px]">
-          <UButton @click="showModalCreate" icon="material-symbols:add"
-            >New</UButton
-          >
+          <UButton @click="showModalCreate" icon="material-symbols:add">
+            New
+          </UButton>
         </div>
       </div>
 
       <ul class="grid grid-cols-1 gap-4 mt-5">
         <li v-for="schedule in schedules" :key="schedule.id">
-          <UiCard border="animated" shadow class="cursor-pointer relative">
-            <div class="absolute top-[5px] right-[5px]">
-              <UButton
-                size="sm"
-                variant="ghost"
-              >
-                {{ schedule.isDefault ? "Default" : "Simple" }}
-              </UButton>
-            </div>
-            <h3 class="font-medium text-xl text-gray-700 dark:text-gray-200">
-              {{ schedule.name }}
-            </h3>
-            <p class="text-sm font-light text-gray-400 dark:text-gray-500">
-              {{ schedule.description }}
-            </p>
-          </UiCard>
+          <NuxtLink :to="`/manager/schedules/detail/${schedule.id}`">
+            <UiCard border="animated" shadow class="cursor-pointer relative">
+              <div class="absolute top-[5px] right-[5px]">
+                <UButton size="sm" variant="ghost">
+                  {{ schedule.isDefault ? "Default" : "Simple" }}
+                </UButton>
+              </div>
+              <h3 class="font-medium text-xl text-gray-700 dark:text-gray-200">
+                {{ schedule.name }}
+              </h3>
+              <p class="text-sm font-light text-gray-400 dark:text-gray-500">
+                {{ schedule.description }}
+              </p>
+            </UiCard>
+          </NuxtLink>
         </li>
       </ul>
     </UiCard>

@@ -60,7 +60,7 @@ onMounted(() => {
   z-index: 1;
   cursor: pointer;
 
-  @apply dark:bg-[rgb(38,38,43)] bg-gray-50 shadow-[0_5px_10px_rgba(0,0,0,0.2)] dark:shadow-[0_5px_10px_rgba(0,0,0,0.8)];
+  @apply dark:bg-gray-800 bg-gray-50 shadow-[0_5px_10px_rgba(0,0,0,0.2)] dark:shadow-[0_5px_10px_rgba(0,0,0,0.8)];
 
   transition: transform 0.15s;
 }

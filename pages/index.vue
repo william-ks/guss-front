@@ -142,6 +142,7 @@ const change = (e, cor) => {
 
 onMounted(() => {
   appConfig.ui.primary = "emerald";
+  appConfig.ui.gray = "neutral";
 });
 </script>
 
