@@ -32,7 +32,7 @@ const changeSideBar = () => {
 <style>
 main {
   width: 100%;
-  min-height: calc(100vh - 65px - 62px);
+  min-height: calc(100vh - 55px - 62px);
 }
 
 footer {

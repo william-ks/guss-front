@@ -2,7 +2,7 @@
   <div class="center">
     <UiCard :shadow="true" border="simple" class="box">
       <div class="state state_card">
-        <UButton @click="openToggleModal" :color="user.isActive ? 'green' : 'red'" variant="soft">
+        <UButton @click="openToggleModal" :color="user.isActive ? 'green' : 'red'" variant="ghost">
           {{ user.isActive ? "Active" : "disabled" }}
         </UButton>
       </div>

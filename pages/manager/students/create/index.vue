@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard :shadow="true" border="simple" class="box">
       <div class="img relative">
         <NuxtImg :src="photoRef || defaultImage" />
 
@@ -208,8 +208,10 @@ const submit = async () => {
     toast.add({
       color: "green",
       title: "Success",
-      description: "User created succesfully",
+      description: "Student created succesfully",
     });
+
+    navigateTo("/manager/students/all");
   } catch (e) {
     toast.clear();
     toast.add({

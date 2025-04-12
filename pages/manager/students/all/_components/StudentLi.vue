@@ -5,7 +5,7 @@
         <div class="state state_card">
           <UButton
             :color="props.student.isActive ? 'green' : 'red'"
-            variant="soft"
+            variant="ghost"
           >
             {{ props.student.isActive ? "Active" : "disabled" }}
           </UButton>

@@ -3,7 +3,7 @@
     <NuxtLink :to="nuxtTo">
       <li class="managerBox">
         <div class="state state_card">
-          <UButton :color="props.manager.isActive ? 'green' : 'red'" variant="soft">
+          <UButton :color="props.manager.isActive ? 'green' : 'red'" variant="ghost">
             {{ props.manager.isActive ? "Active" : "disabled" }}
           </UButton>
         </div>

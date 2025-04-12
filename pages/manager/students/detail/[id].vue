@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard :shadow="true" border="simple" class="box">
       <div class="state state_card">
         <UButton
           @click="openToggleModal"

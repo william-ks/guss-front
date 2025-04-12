@@ -1,6 +1,6 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard :shadow="true" border="simple" class="box">
       <div class="w-[100%] flex justify-end mb-7">
         <NuxtLink to="/manager/students/create">
           <UButton icon="material-symbols:add"> New Student </UButton>
