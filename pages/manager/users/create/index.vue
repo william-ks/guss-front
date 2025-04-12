@@ -5,7 +5,7 @@
         <NuxtImg :src="photoRef || defaultImage" />
 
         <UPopover overlay v-model:open="imagePopover">
-          <UButton rounded icon="i-heroicons-pencil-square" class="absolute top-[-20px] right-[30px]">
+          <UButton rounded icon="i-heroicons-pencil-square" variant="soft" class="w-[122px] absolute top-[-20px] right-[14px]" trailing>
             Edit Image
           </UButton>
 
@@ -61,8 +61,18 @@
           </div>
         </div>
 
-        <div class="item">
-          <UButton @click="permissionModal = true">Select Permissions</UButton>
+        <div class="flex flex-col gap-3 sm:gap-5 sm:flex-row">
+          <div class="item">
+            <p class="text-sm font-extralight mb-1">Password (required)</p>
+            <UInput v-model="form.password" type="password" placeholder="Password" />
+          </div>
+
+          <div class="item">
+            <p class="text-sm font-extralight mb-1">Permissions</p>
+            <UButton @click="permissionModal = true" variant="soft" icon="material-symbols:add-box-outline" trailing>
+              Add Permissions
+            </UButton>
+          </div>
         </div>
       </div>
 
@@ -101,7 +111,7 @@
         </div>
       </div>
       <div class="flex justify-center mt-5">
-        <UButton @click="permissionModal = false" label="Next" icon="material-symbols:arrow-forward" trailing />
+        <UButton @click="permissionModal = false" variant="soft" label="Next" icon="material-symbols:arrow-forward" trailing />
       </div>
     </UiModal>
   </div>
@@ -134,9 +144,9 @@ const roles = ref([]);
 const permissionsRef = ref([]);
 
 const form = ref({
-  name: "Ray",
-  email: "rs@gmail.com",
-  cpf: "020.088.306-24",
+  name: "",
+  email: "",
+  cpf: "",
   address: "",
   phone: "",
   birthday: "",
@@ -218,8 +228,6 @@ const submit = async () => {
         loadingScreen.value = false;
       }
     }
-
-
 
     await managerStore.create({
       name: form.value.name,
@@ -305,8 +313,8 @@ onMounted(() => {
 }
 
 .img {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto;
 
   margin-bottom: 15px;

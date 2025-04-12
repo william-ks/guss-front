@@ -3,20 +3,14 @@
     <NuxtLink :to="nuxtTo">
       <li class="managerBox">
         <div class="state state_card">
-          <UButton
-            :color="props.manager.isActive ? 'green' : 'red'"
-            variant="soft"
-          >
+          <UButton :color="props.manager.isActive ? 'green' : 'red'" variant="soft">
             {{ props.manager.isActive ? "Active" : "disabled" }}
           </UButton>
         </div>
         <div class="img">
-          <NuxtImg
-            :src="
-              manager.photo ||
-              'https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg'
-            "
-          />
+          <NuxtImg :src="manager.photo ||
+            'https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg'
+            " />
         </div>
         <div class="desc">
           <p>{{ props.manager.name }}</p>
@@ -62,7 +56,7 @@ onMounted(() => {
 
   @apply border-[1px] border-white dark:border-gray-900;
   @apply dark:border-gray-800 border-gray-200;
-  @apply dark:bg-gray-800 bg-gray-50 shadow-[0_5px_10px_rgba(0,0,0,0.15)] dark:shadow-[0_5px_10px_rgba(0,0,0,0.7)];
+  @apply shadow-[0_5px_10px_rgba(0,0,0,0.15)] dark:shadow-[0_5px_10px_rgba(0,0,0,0.7)];
 
   transition: transform 0.15s;
 }
@@ -102,13 +96,22 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 550px) {
+  .managerBox {
+    padding: 8px 5%;
+  }
+
   .managerBox .img {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
 
   .managerBox p {
+    font-size: 0.7rem;
+  }
+
+  .state_card .u-button {
     font-size: 0.8rem;
+    /* Ajuste o tamanho da fonte conforme necessário */
   }
 }
 </style>

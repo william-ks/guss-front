@@ -1,13 +1,14 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard :shadow="true" border="simple" class="box">
       <div class="img relative">
         <NuxtImg :src="photoEdit || user.photo" />
         <UPopover overlay v-if="isEditing" v-model:open="openedPopover">
           <UButton
             rounded
+            variant="soft"
             icon="i-heroicons-pencil-square"
-            class="absolute top-[-20px] right-[30px]"
+            class="absolute top-[-20px] right-[37px]"
           >
             Edit Image
           </UButton>
@@ -106,17 +107,19 @@
         <UButton
           v-if="!isEditing"
           @click="isEditing = true"
-          variant="outline"
+          variant="soft"
           icon="i-heroicons-pencil-square"
+          block
+          trailing
         >
-          Edit
+          Edit Profile
         </UButton>
 
         <UButton
           v-if="isEditing"
           @click="resetFields"
           color="red"
-          variant="outline"
+          variant="soft"
         >
           Cancelar
         </UButton>
@@ -124,7 +127,7 @@
         <UButton
           v-if="isEditing"
           @click="updateUser"
-          variant="outline"
+          variant="soft"
           color="green"
         >
           Salvar

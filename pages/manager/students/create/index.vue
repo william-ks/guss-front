@@ -7,8 +7,9 @@
         <UPopover overlay v-model:open="imagePopover">
           <UButton
             rounded
+            variant="soft"
             icon="i-heroicons-pencil-square"
-            class="absolute top-[-20px] right-[30px]"
+            class="w-[122px] absolute top-[-20px] right-[14px]"
           >
             Edit Image
           </UButton>
@@ -256,8 +257,8 @@ onMounted(() => {
 }
 
 .img {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   margin: 0 auto;
 
   margin-bottom: 15px;

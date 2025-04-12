@@ -32,12 +32,23 @@ const changeSideBar = () => {
 <style>
 main {
   width: 100%;
-  min-height: calc(100vh - 56px - 62px);
+  min-height: calc(100vh - 65px - 62px);
 }
 
 footer {
   z-index: 2;
   position: relative;
   @apply bg-white dark:bg-gray-900 shadow-[0_-5px_10px_hsl(var(--shadow))];
+}
+
+@media screen and (max-width: 450px) {
+  footer h2 {
+    @apply text-sm;
+  }
+
+  main {
+    width: 100%;
+    min-height: calc(100vh - 50px - 62px);
+  }
 }
 </style>
