@@ -7,9 +7,9 @@
         <Icon name="material-symbols:arrow-drop-down-rounded" />
       </div>
       <Card
-        shadow
-        border
         v-if="active"
+        border="simple"
+        :shadow="true"
         class="dropdown"
         :style="{ width: `${defaultWidth + 15}px` }"
       >

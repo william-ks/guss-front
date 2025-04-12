@@ -1,12 +1,8 @@
 <template>
   <div class="center">
-    <UiCard :shadow="true" :border="true" class="box">
+    <UiCard :shadow="true" border="simple" class="box">
       <div class="state state_card">
-        <UButton
-          @click="openToggleModal"
-          :color="user.isActive ? 'green' : 'red'"
-          variant="soft"
-        >
+        <UButton @click="openToggleModal" :color="user.isActive ? 'green' : 'red'" variant="soft">
           {{ user.isActive ? "Active" : "disabled" }}
         </UButton>
       </div>
@@ -62,51 +58,30 @@
       </div>
 
       <div class="w-[100%] flex justify-center items-center gap-16 mt-5">
-        <UButton
-          v-if="canEdit"
-          :disabled="!user.isActive"
-          @click="isOpenModal = true"
-          variant="outline"
-          :color="user.isActive ? 'primary' : 'gray'"
-          icon="i-heroicons-pencil-square"
-        >
+        <UButton v-if="canEdit" :disabled="!user.isActive" @click="isOpenModal = true" variant="outline"
+          :color="user.isActive ? 'primary' : 'gray'" icon="i-heroicons-pencil-square">
           Edit This User
         </UButton>
       </div>
     </UiCard>
 
-    <UiModal
-      @update:model-value="resetFields"
-      v-if="canEdit"
-      v-model="isOpenModal"
-    >
+    <UiModal @update:model-value="resetFields" v-if="canEdit" v-model="isOpenModal">
       <h2 class="modalTitle">Edit User</h2>
 
       <div class="modalItens">
         <div class="modalItem">
           <h3>Role:</h3>
 
-          <USelectMenu
-            searchable
-            searchable-placeholder="Search a person..."
-            @change="toggleItem({ type: 'role' })"
-            v-model="role"
-            :options="roles"
-            placeholder="Role"
-            option-attribute="name"
-          />
+          <USelectMenu searchable searchable-placeholder="Search a person..." @change="toggleItem({ type: 'role' })"
+            v-model="role" :options="roles" placeholder="Role" option-attribute="name" />
         </div>
 
         <div class="modalItem">
           <h3>Permissions:</h3>
           <ul class="permissions">
             <li v-for="permission of permissionsRef" :key="permission.id">
-              <label :for="`checkbox${permission.id}`">
-                <input
-                  type="checkbox"
-                  class="checkbox"
-                  :id="`checkbox${permission.id}`"
-                  :checked="permission.selected"
+              <label for="null">
+                <input type="checkbox" class="checkbox" :id="`checkbox${permission.id}`" :checked="permission.selected"
                   @click="
                     toggleItem({
                       type: 'permission',
@@ -114,16 +89,15 @@
                       code: permission.code,
                       disabled: permission.disabled,
                     })
-                  "
-                />
-                <div
-                  :class="{
+                    " />
+                <label :for="`checkbox${permission.id}`">
+                  <div :class="{
                     modalPermission: true,
                     disabled: permission.disabled,
-                  }"
-                >
-                  {{ permission.name }}
-                </div>
+                  }">
+                    {{ permission.name }}
+                  </div>
+                </label>
               </label>
             </li>
           </ul>
@@ -131,47 +105,28 @@
       </div>
 
       <div class="flex justify-center items-center mt-5">
-        <UButton
-          variant="outline"
-          :color="
-            dataToUpdate.permissions.length <= 0 && !dataToUpdate.roleId
-              ? 'gray'
-              : 'primary'
-          "
-          :disabled="
-            dataToUpdate.permissions.length <= 0 && !dataToUpdate.roleId
-          "
-          @click="tryUpdate"
-        >
+        <UButton variant="outline" :color="dataToUpdate.permissions.length <= 0 && !dataToUpdate.roleId
+          ? 'gray'
+          : 'primary'
+          " :disabled="dataToUpdate.permissions.length <= 0 && !dataToUpdate.roleId
+            " @click="tryUpdate">
           Update data
         </UButton>
       </div>
     </UiModal>
 
-    <UiModal
-      @update:model-value="resetFields"
-      v-if="canEdit"
-      v-model="isOpenSecondModal"
-    >
+    <UiModal @update:model-value="resetFields" v-if="canEdit" v-model="isOpenSecondModal">
       <h2 class="text-center text-xl">
         Are you sure you want to
         {{ user.isActive ? "deactivate" : "activate" }} this user?
       </h2>
 
       <div class="w-[100%] flex items-center justify-evenly mt-7">
-        <UButton
-          variant="outline"
-          v-on:mouseover="redButton = true"
-          v-on:mouseout="redButton = false"
-          :color="redButton ? 'red' : 'gray'"
-        >
+        <UButton variant="outline" v-on:mouseover="redButton = true" v-on:mouseout="redButton = false"
+          :color="redButton ? 'red' : 'gray'">
           Cancel
         </UButton>
-        <UButton
-          @click="toggleManager(!user.isActive)"
-          variant="outline"
-          color="green"
-        >
+        <UButton @click="toggleManager(!user.isActive)" variant="outline" color="green">
           Confirm
         </UButton>
       </div>
@@ -313,14 +268,13 @@ const toggleItem = (item) => {
       permissionsRef.value = permissionsRef.value.map((el) =>
         el.code === item.code
           ? {
-              ...el,
-              selected: document.querySelector(`#checkbox${item.id}`).checked,
-            }
+            ...el,
+            selected: document.querySelector(`#checkbox${item.id}`).checked,
+          }
           : el
       );
       return;
     }
-
     const alreadyExists = dataToUpdate.value.permissions.find(
       (el) => el.code === item.code
     );
@@ -330,7 +284,6 @@ const toggleItem = (item) => {
       );
       return;
     }
-
     const userAlreadyHaveThisPermission = user.value.permissions.includes(
       item.code
     );
@@ -349,7 +302,7 @@ const toggleItem = (item) => {
 };
 
 const resetFields = () => {
-  dataToUpdate.value = { roleId: null, permissions: [] };  
+  dataToUpdate.value = { roleId: null, permissions: [] };
 };
 
 const tryUpdate = async () => {
@@ -521,11 +474,11 @@ h3 {
   opacity: 0.4;
 }
 
-.modalItem input:not(:checked) ~ .modalPermission {
+.modalItem input:not(:checked)~label .modalPermission {
   transform: scale(0.98);
 }
 
-.modalItem input:checked ~ .modalPermission {
+.modalItem input:checked~label .modalPermission {
   transform: scale(1);
   @apply dark:border-primary-500 border-primary-500 text-primary-500 opacity-100;
 }

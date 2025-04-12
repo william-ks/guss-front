@@ -4,11 +4,11 @@ import defaultTheme from "tailwindcss/defaultTheme";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./components/**/*.{vue,js}",
-    "./layouts/**/*.vue",
-    "./pages/**/*.vue",
-    "./plugins/**/*.{js,ts}",
-    "./nuxt.config.{js,ts}",
+    "./components/**/*.{vue,tsx,ts,js}",
+    "./layouts/**/*.{vue,tsx,ts,js}",
+    "./pages/**/*.{vue,tsx,ts,js}",
+    "./plugins/**/*.{vue,tsx,ts,js}",
+    "./nuxt.config.{vue,tsx,ts,js}",
   ],
   darkMode: "class",
   theme: {

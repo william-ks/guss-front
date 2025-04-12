@@ -46,7 +46,8 @@ const props = defineProps({
 .sideBar.visible {
   padding: 16px 0;
   width: clamp(200px, 97%, 300px);
-  @apply border-r-[1px] border-primary-300 dark:border-primary-500 bg-white dark:bg-gray-900;
+  @apply bg-white dark:bg-gray-900;
+  /* @apply border-r-[1px] border-primary-300 dark:border-primary-500; */
 }
 
 .header {

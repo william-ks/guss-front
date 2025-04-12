@@ -1,6 +1,6 @@
 <template>
   <div class="modal" @click.self="closeModal" v-if="visible">
-    <Card border class="card">
+    <Card class="card">
       <div class="closeBtn" @click="closeModal">
         <Icon name="material-symbols:close-small-outline-rounded" />
       </div>
@@ -86,7 +86,7 @@ onMounted(() => {
   @apply dark:bg-gray-900 bg-gray-50;
 }
 
-.modal .card.cBorder .closeBtn {
+.modal .card .closeBtn {
   border-top: 1px solid;
   border-right: 1px solid;
   @apply dark:border-primary-500 border-primary-900 dark:bg-gray-900 bg-gray-100;

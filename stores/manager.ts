@@ -203,20 +203,11 @@ export const useManagerStore = defineStore("managerStore", () => {
 
   const create = async (form: ICreateManager) => {
     try {
-      console.log({
-        ...form,
-        password: 'teste123',
-        permissions: []
-      });
-      
-
       await $fetch(`${config.public.apiUrl}/manager/create`, {
         method: "POST",
         credentials: "include",
         body: {
           ...form,
-          password: 'teste123',
-          permissions: []
         },
       });
     } catch (e: any) {

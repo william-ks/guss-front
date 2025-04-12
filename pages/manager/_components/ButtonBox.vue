@@ -1,6 +1,6 @@
 <template>
   <NuxtLink :to="props.link">
-    <UiCard :shadow="true" :border="true" class="buttonBox">
+    <UiCard border="animated" :shadow="true" class="buttonBox">
       <div class="icon">
         <UIcon :name="icon" />
       </div>
@@ -35,7 +35,6 @@ const props = defineProps({
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  transition: transform 0.1s;
 }
 
 .buttonBox:hover {
