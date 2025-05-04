@@ -88,8 +88,8 @@ onMounted(() => {
 }
 
 .studentBox .img {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   transition: width 0.15s, height 0.15s;
 }
 

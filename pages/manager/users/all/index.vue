@@ -3,7 +3,7 @@
     <UiCard border="simple" :shadow="true" class="box">
       <div class="w-[100%] flex justify-end mb-7">
         <NuxtLink to="/manager/users/create">
-          <UButton icon="material-symbols:add"> New manager </UButton>
+          <UButton variant="soft" icon="material-symbols:add"> New manager </UButton>
         </NuxtLink>
       </div>
       <ul class="w-[100%] flex gap-5 flex-col">

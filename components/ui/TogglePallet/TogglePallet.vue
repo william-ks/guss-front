@@ -1,5 +1,5 @@
 <template>
-  <UPopover :popper="{ placement: 'bottom-end' }">
+  <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 0 }" >
     <UButton variant="ghost">
       <UIcon class="text-2xl" name="heroicons:swatch-20-solid" />
     </UButton>
@@ -7,19 +7,10 @@
     <template #panel>
       <div class="p-4">
         <div class="grid grid-cols-5 gap-px">
-          <UTooltip
-            :text="color"
-            class="capitalize"
-            v-for="color of colors"
-            :key="color"
-          >
-            <div
-              @click="setPrimaryColor(color)"
-              :class="`p-[4px] w-[24px] h-[24px] rounded-md cursor-pointer hover-${color}`"
-            >
-              <span
-                :class="`w-[16px] h-[16px] block rounded-full background-${color}`"
-              ></span>
+          <UTooltip :text="color" class="capitalize" v-for="color of colors" :key="color">
+            <div @click="setPrimaryColor(color)"
+              :class="`p-[4px] w-[24px] h-[24px] rounded-md cursor-pointer hover-${color}`">
+              <span :class="`w-[16px] h-[16px] block rounded-full background-${color}`"></span>
             </div>
           </UTooltip>
         </div>
@@ -27,19 +18,10 @@
       <UDivider />
       <div class="p-4">
         <div class="grid grid-cols-5 gap-px">
-          <UTooltip
-            :text="grayColor"
-            class="capitalize"
-            v-for="grayColor of grayColors"
-            :key="grayColor"
-          >
-            <div
-              @click="setGrayColor(grayColor)"
-              :class="`p-[4px] w-[24px] h-[24px] rounded-md cursor-pointer hover-${grayColor}`"
-            >
-              <span
-                :class="`w-[16px] h-[16px] block rounded-full background-${grayColor}`"
-              ></span>
+          <UTooltip :text="grayColor" class="capitalize" v-for="grayColor of grayColors" :key="grayColor">
+            <div @click="setGrayColor(grayColor)"
+              :class="`p-[4px] w-[24px] h-[24px] rounded-md cursor-pointer hover-${grayColor}`">
+              <span :class="`w-[16px] h-[16px] block rounded-full background-${grayColor}`"></span>
             </div>
           </UTooltip>
         </div>

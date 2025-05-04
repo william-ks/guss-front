@@ -3,7 +3,7 @@
     <UiCard :shadow="true" border="simple" class="box">
       <div class="w-[100%] flex justify-end mb-7">
         <NuxtLink to="/manager/students/create">
-          <UButton icon="material-symbols:add"> New Student </UButton>
+          <UButton variant="soft" icon="material-symbols:add"> New Student </UButton>
         </NuxtLink>
       </div>
       <ul class="w-[100%] flex gap-5 flex-col" v-if="studentsList.length > 0">
@@ -44,5 +44,9 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 150px);
+}
+
+.box{
+  min-height: 60vh;
 }
 </style>

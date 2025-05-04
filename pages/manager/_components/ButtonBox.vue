@@ -12,7 +12,6 @@
 <script setup>
 const props = defineProps({
   link: {
-    default: "/",
     type: String,
   },
   icon: {

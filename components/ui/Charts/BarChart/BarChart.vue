@@ -39,7 +39,6 @@ const chartOptions = {
 const props = defineProps({
   chartData: {
     type: Object as PropType<IChartBarData>,
-
     required: true,
   },
 });

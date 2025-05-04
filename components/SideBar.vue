@@ -2,22 +2,22 @@
   <aside class="sideBar" :class="{ visible: props.visible }">
     <div class="header">
       <UiTogglePallet />
+      <UiToggleTheme />
     </div>
     <nav class="menu">
       <ul @click="$emit('close')">
-        <li>
-          <NuxtLink to="/manager/dashboard"> Dashboard </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/manager/students/all"> Students </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink to="/manager/users/all"> Managers </NuxtLink>
+        <li v-for="item in menuItens" :key="item.id">
+          <NuxtLink :to="item.link">
+            <div class="flex items-center justify-start gap-3">
+              <UIcon :name="item.icon" class="inline-block text-2xl" />
+              <p class="">{{ item.name }}</p>
+            </div>
+          </NuxtLink>
         </li>
       </ul>
     </nav>
     <div class="px-2">
-      <UiToggleTheme />
+
     </div>
   </aside>
 </template>
@@ -26,6 +26,40 @@
 const props = defineProps({
   visible: Boolean,
 });
+
+const menuItens = ref([
+  {
+    id: 1,
+    name: 'Home',
+    link: '/manager/home',
+    icon: 'material-symbols:home-outline'
+  },
+  {
+    id: 2,
+    name: 'Managers',
+    link: '/manager/users/all',
+    icon: 'ph:users-three-duotone'
+  },
+  {
+    id: 3,
+    name: 'Students',
+    link: '/manager/students/all',
+    icon: 'hugeicons:students'
+  },
+  {
+    id: 4,
+    name: 'Classes',
+    link: '/manager/classrooms/all',
+    icon: 'lineicons:blackboard'
+  },
+  {
+    id: 4,
+    name: 'Schedules',
+    link: '/manager/schedules/all',
+    icon: 'uil:schedule'
+  },
+
+]);
 </script>
 
 <style scoped>
@@ -51,6 +85,10 @@ const props = defineProps({
 }
 
 .header {
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
 }
 
@@ -74,7 +112,7 @@ const props = defineProps({
 .menu ul li a {
   width: 100%;
   cursor: pointer;
-  padding: 15px 2%;
+  padding: 15px 3%;
   display: inline-block;
   border-bottom: 1px solid #242424;
 

@@ -2,7 +2,7 @@
   <div class="center">
     <UiCard shadow border="simple" style="min-height: 70svh">
       <div class="relative">
-        <h2 class="text-center text-2xl">Default models</h2>
+        <h2 class="text-center text-2xl">Schedules</h2>
         <div class="absolute top-0 right-[5px]">
           <UButton @click="showModalCreate" icon="material-symbols:add">
             New
@@ -12,7 +12,7 @@
 
       <ul class="grid grid-cols-1 gap-4 mt-5">
         <li v-for="schedule in schedules" :key="schedule.id">
-          <NuxtLink :to="`/manager/schedules/detail/${schedule.id}`">
+          <NuxtLink :to="`/manager/schedules/detail/${schedule.publicId}`">
             <UiCard border="animated" shadow class="cursor-pointer relative">
               <div class="absolute top-[5px] right-[5px]">
                 <UButton size="sm" variant="ghost">
@@ -138,7 +138,7 @@ const getSchedules = async () => {
 onMounted(() => {
   getSchedules();
   const actualPage = useState("actualPage");
-  actualPage.value = "Default Schedules";
+  actualPage.value = "Schedules";
 });
 </script>
 

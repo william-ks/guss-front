@@ -119,7 +119,7 @@
           v-if="isEditing"
           @click="resetFields"
           color="red"
-          variant="soft"
+          variant="ghost"
         >
           Cancelar
         </UButton>

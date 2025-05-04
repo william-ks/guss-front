@@ -1,6 +1,6 @@
 <template>
   <div class="modal" @click.self="closeModal" v-if="visible">
-    <Card class="card">
+    <Card class="card" v-bind="$attrs" :shadow="true" border="simple">
       <div class="closeBtn" @click="closeModal">
         <Icon name="material-symbols:close-small-outline-rounded" />
       </div>
@@ -114,7 +114,7 @@ onMounted(() => {
 }
 
 @media screen and (min-width: 749px) {
-  .closeBtn:hover > span {
+  .closeBtn:hover>span {
     color: hsl(8 80% 56%);
   }
 }

@@ -1,31 +1,15 @@
 <template>
   <div class="center">
     <div class="g">
-      <ButtonBox
-        link="/manager/users/all"
-        icon="hugeicons:manager"
-        title="Managers"
-      />
+      <ButtonBox link="/manager/users/all" icon="hugeicons:manager" title="Managers" />
 
       <ButtonBox link="/" icon="hugeicons:hierarchy" title="Roles" />
 
-      <ButtonBox
-        link="/manager/students/all"
-        icon="ph:student"
-        title="Students"
-      />
+      <ButtonBox link="/manager/students/all" icon="hugeicons:students" title="Students" />
 
-      <ButtonBox
-        link="/manager/classroom/all"
-        icon="lineicons:blackboard"
-        title="Classes"
-      />
+      <ButtonBox link="/manager/classrooms/all" icon="lineicons:blackboard" title="Classes" />
 
-      <ButtonBox
-        link="/manager/schedules/all"
-        icon="material-symbols:calendar-month-outline"
-        title="Schedules"
-      />
+      <ButtonBox link="/manager/schedules/all" icon="material-symbols:calendar-month-outline" title="Schedules" />
     </div>
   </div>
 </template>
@@ -36,7 +20,7 @@ import ButtonBox from "./_components/ButtonBox";
 const actualPage = useState("actualPage");
 
 onMounted(() => {
-  actualPage.value = "Dashboard";
+  actualPage.value = "Home";
 });
 </script>
 

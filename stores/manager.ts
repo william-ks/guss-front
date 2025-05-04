@@ -50,10 +50,10 @@ export const useManagerStore = defineStore("managerStore", () => {
       photo.value = data.user.photo;
       permissions.value = data.user.permissions;
 
-      return "/manager/dashboard";
+      return "/manager/home";
     } catch (e: any) {
       console.log(e);
-      
+
       throw new Error(e.response._data.message);
     }
   };
@@ -213,7 +213,7 @@ export const useManagerStore = defineStore("managerStore", () => {
     } catch (e: any) {
       throw new Error(e.data.message);
     }
-  }
+  };
 
   return {
     id,
@@ -264,7 +264,7 @@ interface IUpdateOther {
     | null[];
 }
 
-interface ICreateManager{
+interface ICreateManager {
   name: string;
   email: string;
   photo?: string;
