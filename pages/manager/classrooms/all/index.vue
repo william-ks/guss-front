@@ -21,7 +21,7 @@
       </ul>
     </UiCard>
 
-    <NewClassModal v-model="newClassModal" />
+    <NewClassModal @classCreated="downloadClassrooms" v-model="newClassModal" />
   </div>
 </template>
 
@@ -33,9 +33,10 @@ import NewClassModal from "./_components/NewClassModal.vue";
 // import { useClassroomStore } from "@/stores/classroom";
 
 const classrooms = ref([]);
-const newClassModal = ref(true);
+const newClassModal = ref(false);
 
 const downloadClassrooms = async () => {
+  newClassModal.value = false;
   try {
     const response = await $fetch(
       `http://localhost:3001/api/classroom/list/all`,

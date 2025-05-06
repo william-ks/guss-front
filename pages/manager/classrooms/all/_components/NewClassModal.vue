@@ -6,7 +6,7 @@
 
       <div class="flex flex-col gap-5">
         <UFormGroup label="Class Name (required)">
-          <UInput v-model="name" placeholder="Enter class name" />
+          <UInput v-model="className" placeholder="Enter class name" />
         </UFormGroup>
         <UFormGroup label="Teacher (optional)">
           <USelectMenu searchable searchable-placeholder="Search by Schedule name" placeholder="Select a schedule"
@@ -20,7 +20,7 @@
 
         <div class="flex sm:flex-wrap gap-5 justify-between items-center">
           <UFormGroup class="w-[45%]" label="Schedule name">
-            <UInput class="w-full" v-model="name" placeholder="Enter schedule name" />
+            <UInput class="w-full" v-model="scheduleName" placeholder="Enter schedule name" />
           </UFormGroup>
 
           <UFormGroup class="w-[45%]" label="Schedule base (optional)">
@@ -31,20 +31,15 @@
         </div>
 
         <UFormGroup label="Select students (optional)">
-          <USelectMenu multiple searchable searchable-placeholder="Search by student name" placeholder="Select a student"
-            class="w-full" v-model="selectedStudents" :options="students">
-            <template #leading>
-              <UIcon v-if="selectedTeacher.icon" :name="(selectedTeacher.icon)" class="w-5 h-5" />
-              <UAvatar v-else-if="selectedTeacher.avatar" v-bind="(selectedTeacher.avatar)" size="2xs" />
-            </template>
-          </USelectMenu>
+          <USelectMenu multiple searchable searchable-placeholder="Search by student name"
+            placeholder="Select the students" class="w-full" v-model="selectedStudent" :options="students" />
         </UFormGroup>
 
         <UDivider class="my-3" />
 
         <div class="buttons w-full flex gap-2 justify-between items-center">
           <UButton variant="ghost" color="red" @click="internalValue = false;">Cancel</UButton>
-          <UButton variant="soft" color="green" @click="() => { }">Create Class</UButton>
+          <UButton variant="soft" color="green" @click="submitForm">Create Class</UButton>
         </div>
 
 
@@ -54,12 +49,14 @@
 </template>
 
 <script setup>
+const toast = useToast()
+
 const props = defineProps({
   modelValue: Boolean,
 });
 
 const internalValue = ref(props.modelValue);
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'classCreated']);
 
 
 watch(() => props.modelValue, (newValue) => {
@@ -74,17 +71,19 @@ watch(internalValue, (newValue) => {
 // ------------------------------- RESET ALL -------------------------------
 
 const resetAll = () => {
-  name.value = null;
+  className.value = null;
+  scheduleName.value = null;
+
   selectedTeacher.value = {
-    id: 1,
+    id: 0,
     label: "No Teacher Assigned",
     icon: 'i-heroicons-user-circle',
   };
-  selectedSchedule.value = {
-    id: 1,
-    name: "No Schedule Assigned",
-  };
-}
+
+  selectedSchedule.value = schedules.value.length > 0 ? schedules.value[0].id : null;
+
+  selectedStudent.value = [];
+};
 
 
 // ----------------------- TEACHERS -----------------------
@@ -93,7 +92,7 @@ const resetAll = () => {
 const teachers = ref([]);
 
 const selectedTeacher = ref({
-  id: 1,
+  id: 0,
   label: "No Teacher Assigned",
   icon: 'i-heroicons-user-circle',
 });
@@ -122,7 +121,7 @@ const getTeachers = async () => {
     });
 
     teachers.value.unshift({
-      id: 1,
+      id: 0,
       label: "No Teacher Assigned",
       icon: 'i-heroicons-user-circle',
     });
@@ -137,8 +136,6 @@ const getTeachers = async () => {
 }
 
 // ----------------------- Schedules -----------------------
-
-
 const schedules = ref([]);
 
 const selectedSchedule = ref({
@@ -159,11 +156,13 @@ const getSchedules = async () => {
     // console.log(response);
 
     const array = response.map((schedule) => {
+
+      const name = `${schedule.name}${schedule.isDefault ? ' (default)' : ''}`;
       return {
-        id: schedule.id,
-        name: schedule.name,
+        id: schedule.publicId,
+        name: name,
       };
-    });
+    }).filter(Boolean);
 
     array.push({
       id: 0,
@@ -183,7 +182,7 @@ const getSchedules = async () => {
 
 //-------------------------- STUDENTS --------------------------
 const students = ref(null);
-const selectedStudents = ref(null);
+const selectedStudent = ref([]);
 
 const getStudents = async () => {
   try {
@@ -205,24 +204,103 @@ const getStudents = async () => {
         },
       };
     });
-
-    students.value.unshift({
-      id: 1,
-      label: "No Student Assigned",
-      icon: 'i-heroicons-user-circle',
-    });
-
-
-    console.log(students.value);
   } catch (e) {
     console.log(e);
   }
 }
 
+//-------------------------- refs --------------------------
+const className = ref(null);
+const scheduleName = ref(null);
 
+//-------------------------- form send ----------------------
+const submitSchedule = async () => {
+  try {
+    const scheduleForm = {
+      name: scheduleName.value,
+      scheduleId: selectedSchedule.value,
+      isDefault: false,
+    };
 
-//-------------------------- name --------------------------
-const name = ref(null);
+    if (!scheduleForm.name) {
+      throw { code: 123, message: 'Schedule name is required' };
+    }
+
+    const response = await $fetch(`http://localhost:3001/api/schedule/create`, {
+      method: "POST",
+      credentials: "include",
+      body: scheduleForm,
+    });
+
+    return response;
+  } catch (e) {
+    toast.clear();
+    toast.add({
+      title: 'Error',
+      color: 'red',
+      icon: 'material-symbols:error-rounded',
+      description: e.message || 'An error occurred while creating the schedule',
+    });
+    throw e;
+
+  }
+}
+
+const submitForm = async () => {
+  const form = {
+    name: className.value,
+    teacherId: null,
+    scheduleId: null,
+    studentsIds: selectedStudent.value.map((student) => student.id).filter(Boolean),
+  };
+
+  if (scheduleName.value !== null) {
+    try {
+      const schedule = await submitSchedule();
+      form.scheduleId = schedule.id;
+    } catch (e) {
+      return;
+    }
+  }
+
+  try {
+
+    if (!form.name) {
+      toast.clear();
+      toast.add({
+        title: 'Error',
+        color: 'red',
+        icon: 'material-symbols:error-rounded',
+        description: 'Class name is required',
+      });
+      return;
+    }
+
+    if (selectedTeacher.value.id && selectedTeacher.value.id > 0) {
+      form.teacherId = selectedTeacher.value.id;
+    }
+
+    const response = await $fetch(`http://localhost:3001/api/classroom/create`, {
+      method: "POST",
+      credentials: "include",
+      body: form,
+    });
+
+    console.log('Form:', form);
+    toast.clear();
+    toast.add({
+      title: 'Success',
+      color: 'green',
+      icon: 'material-symbols:check-circle-rounded',
+      description: 'Class created successfully',
+    });
+
+    resetAll();
+    emit('classCreated');
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 //------------------------ OnMounted -----------------------
 
