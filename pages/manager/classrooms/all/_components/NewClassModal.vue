@@ -145,6 +145,8 @@ const selectedSchedule = ref({
   icon: 'i-heroicons-user-circle',
 });
 
+const createdSchedule = ref(null);
+
 const getSchedules = async () => {
   try {
     const response = await $fetch(`http://localhost:3001/api/schedule/read/all`, {
@@ -232,7 +234,7 @@ const submitSchedule = async () => {
       body: scheduleForm,
     });
 
-    return response;
+    createdSchedule.value = response.id;
   } catch (e) {
     toast.clear();
     toast.add({
@@ -254,13 +256,16 @@ const submitForm = async () => {
     studentsIds: selectedStudent.value.map((student) => student.id).filter(Boolean),
   };
 
-  if (scheduleName.value !== null) {
-    try {
-      const schedule = await submitSchedule();
-      form.scheduleId = schedule.id;
+  if (scheduleName.value !== null && !selectedSchedule.value) {
+    try {await submitSchedule();
+      form.scheduleId = createdSchedule.value.id;
     } catch (e) {
       return;
     }
+  }
+
+  if(selectedSchedule.value !== null) {
+    form.scheduleId = selectedSchedule.value;
   }
 
   try {
