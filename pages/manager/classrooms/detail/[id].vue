@@ -11,13 +11,13 @@
           @click="classInfoSideBar = true" />
         <ButtonBox class="block" title="Students" icon="hugeicons:students"
           @click="studentsInfoModal = true" />
-        <ButtonBox class="block" title="Schedule" icon="material-symbols:calendar-month-outline" />
+        <ButtonBox @click="toSchedule" class="block" title="Schedule" icon="material-symbols:calendar-month-outline" />
       </div>
     </UiCard>
 
     <!-- slide class info -->
-    <ClassInfoSlideOver v-if="downloadedData" :info="classroom" v-model="classInfoSideBar" />
-    <ModalStudentsOver :students="classroom.students" v-model="studentsInfoModal" />
+    <ClassInfoSlideOver :scheduleId="classroom.scheduleId" :toSchedule="toSchedule" @upgrade="downloadClassData()" v-if="downloadedData" :info="classroom" v-model="classInfoSideBar" />
+    <ModalStudentsOver @upgrade="downloadClassData()" :classroomId="id" :students="classroom.students" v-model="studentsInfoModal" />
   </div>
 </template>
 
@@ -49,7 +49,7 @@ const classroom = ref({
 
 // sidebars controllers ------------------------------------
 const classInfoSideBar = ref(false);
-const studentsInfoModal = ref(true);
+const studentsInfoModal = ref(false);
 
 // functions ------------------------------------
 const downloadClassData = async () => {
@@ -64,6 +64,22 @@ const downloadClassData = async () => {
     downloadedData.value = true;
   } catch (e) {
     console.log(e);
+  }
+};
+
+
+const toSchedule = () => {
+  const schedule = classroom.value.schedule;
+  if (schedule) {
+    const scheduleId = schedule.id;
+    navigateTo(`/manager/schedules/detail/${scheduleId}`);
+  } else {
+    toast.add({
+      icon: "material-symbols:warning-outline",
+      title: "No schedule found",
+      message: "This classroom does not have a schedule assigned.",
+      type: "warning",
+    });
   }
 };
 

@@ -3,8 +3,16 @@
     <template v-for="(icon, index) in visibleIcons" :key="index">
       <UTooltip :text="icon.name">
         <UAvatar
+          v-if="index === 0"
           size="md"
           :class="`avatar avatar-${index + 1}`"
+          :alt="icon.name"
+          :src="icon.link"
+        />
+        <UAvatar
+          v-else
+          size="md"
+          :class="`ml-[-15px] z-[${index + 1}]`"
           :alt="icon.name"
           :src="icon.link"
         />
@@ -30,6 +38,10 @@ const maxVisible = 3;
 
 const visibleIcons = computed(() => props.icons.slice(0, maxVisible));
 const remainingIcons = computed(() => props.icons.length - maxVisible);
+
+onMounted(() => {
+  console.log('AvatarGroup mounted with icons:', props.icons);
+});
 </script>
 
 <style scoped>
@@ -43,7 +55,7 @@ const remainingIcons = computed(() => props.icons.length - maxVisible);
 }
 
 .avatar:not(:first-child) {
-  margin-left: -15px;
+  margin-left: -10px; /* Adjusted for slight overlap */
 }
 
 .avatar-1 {

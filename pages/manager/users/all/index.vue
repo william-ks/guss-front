@@ -38,4 +38,8 @@ onMounted(() => {
   align-items: center;
   min-height: calc(100vh - 150px);
 }
+
+.box {
+  min-height: 60vh;
+}
 </style>

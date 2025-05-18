@@ -24,7 +24,8 @@
 
 <script setup>
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: Boolean,
+
 });
 
 const internalValue = ref(props.modelValue);

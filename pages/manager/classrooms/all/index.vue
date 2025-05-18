@@ -1,23 +1,30 @@
 <template>
   <div class="center ">
     <UiCard :shadow="true" border="simple" class="ct">
-      <div class="w-full flex justify-end">
+      <div class="w-full flex justify-between">
+        <USelect placeholder="Level" :options="levels" />
+        <USelect placeholder="Sub Level" :options="['Beginner', 'Intermediary', 'Advanced']" />
         <UButton variant="soft" icon="material-symbols:add" trailing @click="newClassModal = true;">New Class</UButton>
       </div>
 
       <UDivider class="my-3" />
 
       <ul class="flex flex-col gap-4 mt-4">
-        <li @click="navigate(classroom.publicId)" v-for="classroom of classrooms" :key="classroom.publicId">
-          <UiCard :shadow="true" border="simple" class="box relative">
-            <AvatarGroup v-if="classroom.studentsIcons.length > 0" :icons="classroom.studentsIcons" />
-            <UAvatar v-else src="https://i.pinimg.com/736x/cd/3b/f5/cd3bf5ec0480195ac95ee4b17da01b0a.jpg"
-              alt="student-photo" />
+        <UTable sort-asc-icon="i-heroicons-arrow-up-20-solid" sort-desc-icon="i-heroicons-arrow-down-20-solid"
+          :sort-button="{ icon: 'i-heroicons-sparkles-20-solid', color: 'primary', variant: 'outline', size: '2xs', square: false, ui: { rounded: 'rounded-full' } }"
+          class="w-full" :rows="classrooms" :columns="columns">
+          <template #empty-state>
+            <div class="flex flex-col items-center justify-center py-6 gap-3">
+              <span class="italic text-sm">No classes here!</span>
 
-            <h3>{{ classroom.name }} - {{ classroom.students.length }}</h3>
-            <UButton class="absolute top-0 right-0" variant="soft" size="2xs" color="green" label="60%" />
-          </UiCard>
-        </li>
+            </div>
+          </template>
+          <template #actions-data="{ row }">
+            <UTooltip text="Open">
+              <UButton color="gray" @click="openClassroom(row)" variant="ghost" icon="material-symbols:open-in-new" />
+            </UTooltip>
+          </template>
+        </UTable>
       </ul>
     </UiCard>
 
@@ -26,13 +33,55 @@
 </template>
 
 <script setup>
+const toast = useToast();
 import { useRoleStore } from "@/stores/roles";
 import { useManagerStore } from "@/stores/manager";
 import AvatarGroup from "../../../../components/AvatarGroup.vue";
 import NewClassModal from "./_components/NewClassModal.vue";
 // import { useClassroomStore } from "@/stores/classroom";
 
+const levels = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+
+const columns = [{
+  key: 'actions'
+}, {
+  key: 'name',
+  label: 'Name',
+  sortable: true,
+}, {
+  key: 'teacher',
+  label: 'Teacher',
+  sortable: true,
+}, {
+  key: 'students',
+  label: 'Students',
+  sortable: true,
+}, {
+  key: 'level',
+  label: 'Level',
+  sortable: true,
+},]
+
 const classrooms = ref([]);
+
+const openClassroom = row => {
+
+  const classroom = classrooms.value.find((classroom) => classroom.id === row.id);
+
+  if (!classroom) {
+    toast.clear();
+    toast.add({
+      title: "Classroom not found",
+      description: "The classroom you are looking for does not exist.",
+      icon: "i-heroicons-exclamation-circle-20-solid",
+      color: "red",
+    });
+    return;
+  }
+
+  navigateTo(`/manager/classrooms/detail/${classroom.publicId}`);
+}
 const newClassModal = ref(false);
 
 const downloadClassrooms = async () => {
@@ -49,22 +98,20 @@ const downloadClassrooms = async () => {
       }
     );
 
-    classrooms.value = response;
+    console.log(response);
+    classrooms.value = response.map((classroom) => {
+      return {
+        ...classroom,
+        id: classroom.id,
+        name: classroom.name,
+        totalStudents: classroom.students.length,
+        teacher: classroom.teacherId ? classroom.Teacher.name : "Unassigned",
+        students: classroom.students.length,
+        level: "A1 Beginner",
+      };
+    });
 
-    for (let i = 0; i < classrooms.value.length; i++) {
-      const classroom = classrooms.value[i];
-      const students = classroom.students;
-      const icons = [];
-      for (let j = 0; j < students.length; j++) {
-        const student = students[j].student;
-        icons.push({
-          name: student.name,
-          link: student.photo,
-        });
-      }
-
-      classrooms.value[i].studentsIcons = icons;
-    }
+    console.log(classrooms.value);
   } catch (error) {
     console.log(error);
   }

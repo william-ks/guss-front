@@ -82,7 +82,7 @@
         <div class="relative mb-3">
           <div class="flex items-center gap-3">
             <h2 class="font-semibold">Schedule</h2>
-            <UButton size="2xs" variant="link" color="gray" icon="lucide:external-link" @click="() => { }" />
+            <UButton size="2xs" variant="link" color="gray" icon="lucide:external-link" @click="toSchedule" />
           </div>
 
           <UInput v-if="!info.schedule" readonly value="" placeholder="No Schedule Defined" class="w-full" />
@@ -107,6 +107,11 @@ const props = defineProps({
       teacher: null,
     }),
   },
+  toSchedule: {
+    type: Function,
+    
+  },
+  
 });
 
 const internalValue = ref(props.modelValue);
